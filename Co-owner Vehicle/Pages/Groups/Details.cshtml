@@ -14,7 +14,7 @@
             </ol>
         </nav>
         <h2 class="fw-bold mb-1">
-            <i class="bi bi-people text-primary me-2"></i>Nhóm Tesla Model 3
+            <i class="bi bi-people text-primary me-2"></i>Nhóm @Model.Group?.GroupName
         </h2>
         <p class="text-muted mb-0">Quản lý thành viên và sở hữu xe</p>
     </div>
@@ -36,7 +36,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <h6 class="text-muted mb-2">Thành viên</h6>
-                        <h3 class="fw-bold mb-0">4</h3>
+                        <h3 class="fw-bold mb-0">@Model.Members.Count</h3>
                     </div>
                     <div class="stat-icon bg-primary">
                         <i class="bi bi-people"></i>
@@ -51,7 +51,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <h6 class="text-muted mb-2">Tổng sở hữu</h6>
-                        <h3 class="fw-bold mb-0">100%</h3>
+                        <h3 class="fw-bold mb-0">@((Model.Shares.Sum(s => s.Percentage)).ToString("0.#"))%</h3>
                     </div>
                     <div class="stat-icon bg-success">
                         <i class="bi bi-pie-chart"></i>
@@ -66,7 +66,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <h6 class="text-muted mb-2">Voting đang chờ</h6>
-                        <h3 class="fw-bold mb-0">2</h3>
+                        <h3 class="fw-bold mb-0">@(Model.Group?.VotingSessions?.Count(v => v.Status == Co_owner_Vehicle.Models.VotingStatus.Active) ?? 0)</h3>
                     </div>
                     <div class="stat-icon bg-warning">
                         <i class="bi bi-clipboard-check"></i>
@@ -81,7 +81,7 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <h6 class="text-muted mb-2">Chi phí tháng này</h6>
-                        <h3 class="fw-bold mb-0">2.5M</h3>
+                        <h3 class="fw-bold mb-0">@Model.Stats.MonthExpense.ToString("#,##0")</h3>
                     </div>
                     <div class="stat-icon bg-info">
                         <i class="bi bi-currency-dollar"></i>
@@ -106,39 +106,39 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Tên xe</label>
-                        <p class="fw-bold mb-0">Tesla Model 3</p>
+                        <p class="fw-bold mb-0">@Model.Group?.Vehicle?.Brand @Model.Group?.Vehicle?.Model</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Biển số</label>
-                        <p class="fw-bold mb-0">30A-12345</p>
+                        <p class="fw-bold mb-0">@Model.Group?.Vehicle?.LicensePlate</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Năm sản xuất</label>
-                        <p class="mb-0">2023</p>
+                        <p class="mb-0">@Model.Group?.Vehicle?.Year</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Trạng thái</label>
-                        <p class="mb-0"><span class="badge bg-success">Hoạt động</span></p>
+                        <p class="mb-0"><span class="badge @(Model.Group?.Vehicle?.Status == Co_owner_Vehicle.Models.VehicleStatus.Active ? "bg-success" : "bg-secondary")">@Model.Group?.Vehicle?.Status</span></p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Loại xe</label>
-                        <p class="mb-0">Xe điện</p>
+                        <p class="mb-0">@Model.Group?.Vehicle?.VehicleType</p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Số km hiện tại</label>
-                        <p class="mb-0">15,350 km</p>
+                        <p class="mb-0">@(Model.Group?.Vehicle?.CurrentMileage?.ToString("#,##0") ?? "0") km</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Members List -->
-        <div class="card mb-4">
+        <div class="card mb-4" id="members">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">
                     <i class="bi bi-person-circle me-2"></i>Thành viên nhóm
                 </h6>
-                <button class="btn btn-sm btn-primary">
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
                     <i class="bi bi-plus-lg me-1"></i>Thêm thành viên
                 </button>
             </div>
@@ -156,142 +156,45 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-primary text-white me-3">NV</div>
-                                        <div>
-                                            <strong>Nguyễn Văn A</strong><br>
-                                            <small class="text-muted">nguyenvana@email.com</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                            <div class="progress-bar bg-primary" style="width: 30%">30%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-primary">Quản trị viên</span></td>
-                                <td>01/09/2024</td>
-                                <td><span class="badge bg-success">Hoạt động</span></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-success text-white me-3">LT</div>
-                                        <div>
-                                            <strong>Lê Thị B</strong><br>
-                                            <small class="text-muted">lethib@email.com</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                            <div class="progress-bar bg-success" style="width: 30%">30%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-secondary">Thành viên</span></td>
-                                <td>05/09/2024</td>
-                                <td><span class="badge bg-success">Hoạt động</span></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-warning text-white me-3">TT</div>
-                                        <div>
-                                            <strong>Trần Văn C</strong><br>
-                                            <small class="text-muted">tranvanc@email.com</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                            <div class="progress-bar bg-warning" style="width: 25%">25%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-secondary">Thành viên</span></td>
-                                <td>10/09/2024</td>
-                                <td><span class="badge bg-success">Hoạt động</span></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-info text-white me-3">PH</div>
-                                        <div>
-                                            <strong>Phạm Văn D</strong><br>
-                                            <small class="text-muted">phamvand@email.com</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                            <div class="progress-bar bg-info" style="width: 15%">15%</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-secondary">Thành viên</span></td>
-                                <td>15/09/2024</td>
-                                <td><span class="badge bg-success">Hoạt động</span></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            @if (Model.Members.Any())
+                            {
+                                foreach (var m in Model.Members)
+                                {
+                                    var share = Model.Shares.FirstOrDefault(s => s.UserId == m.UserId);
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm bg-primary text-white me-3">@m.User.FirstName?.FirstOrDefault()@m.User.LastName?.FirstOrDefault()</div>
+                                                <div>
+                                                    <strong>@m.User.FullName</strong><br>
+                                                    <small class="text-muted">@m.User.Email</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                                    <div class="progress-bar bg-primary" style="width: @(share?.Percentage ?? 0)%">@((share?.Percentage ?? 0).ToString("0.#"))%</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-secondary">@(m.Role == Co_owner_Vehicle.Models.MemberRole.Member ? "Member" : "Owner")</span></td>
+                                        <td>@m.JoinedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                                        <td><span class="badge @(m.Status == Co_owner_Vehicle.Models.MemberStatus.Active ? "bg-success" : "bg-secondary")">@m.Status</span></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" title="Xem chi tiết">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" class="text-center text-muted">Chưa có thành viên</td></tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -312,54 +215,29 @@
                     </div>
                     <div class="col-md-6">
                         <div class="list-group list-group-flush">
-                            <div class="list-group-item px-0 border-0">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-primary text-white me-3">NV</div>
-                                        <div>
-                                            <strong>Nguyễn Văn A</strong><br>
-                                            <small class="text-muted">30% sở hữu</small>
+                            @if (Model.Members.Any())
+                            {
+                                foreach (var m in Model.Members)
+                                {
+                                    var share = Model.Shares.FirstOrDefault(s => s.UserId == m.UserId)?.Percentage ?? 0;
+                                    <div class="list-group-item px-0 border-0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm bg-primary text-white me-3">@m.User.FirstName?.FirstOrDefault()@m.User.LastName?.FirstOrDefault()</div>
+                                                <div>
+                                                    <strong>@m.User.FullName</strong><br>
+                                                    <small class="text-muted">@share.ToString("0.#")% sở hữu</small>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-primary">@share.ToString("0.#")%</span>
                                         </div>
                                     </div>
-                                    <span class="badge bg-primary">30%</span>
-                                </div>
-                            </div>
-                            <div class="list-group-item px-0 border-0">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-success text-white me-3">LT</div>
-                                        <div>
-                                            <strong>Lê Thị B</strong><br>
-                                            <small class="text-muted">30% sở hữu</small>
-                                        </div>
-                                    </div>
-                                    <span class="badge bg-success">30%</span>
-                                </div>
-                            </div>
-                            <div class="list-group-item px-0 border-0">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-warning text-white me-3">TT</div>
-                                        <div>
-                                            <strong>Trần Văn C</strong><br>
-                                            <small class="text-muted">25% sở hữu</small>
-                                        </div>
-                                    </div>
-                                    <span class="badge bg-warning">25%</span>
-                                </div>
-                            </div>
-                            <div class="list-group-item px-0 border-0">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-info text-white me-3">PH</div>
-                                        <div>
-                                            <strong>Phạm Văn D</strong><br>
-                                            <small class="text-muted">15% sở hữu</small>
-                                        </div>
-                                    </div>
-                                    <span class="badge bg-info">15%</span>
-                                </div>
-                            </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-muted">Chưa có thành viên</div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -372,64 +250,52 @@
                 <h6 class="mb-0">
                     <i class="bi bi-clipboard-check me-2"></i>Voting đang chờ
                 </h6>
-                <a href="#" class="btn btn-sm btn-primary">
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createVotingModal">
                     <i class="bi bi-plus-lg me-1"></i>Tạo voting mới
-                </a>
+                </button>
             </div>
             <div class="card-body">
                 <div class="list-group list-group-flush">
-                    <div class="list-group-item px-0">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Bình chọn thay lốp mới</h6>
-                                <p class="text-muted mb-2 small">
-                                    Đề xuất thay lốp mùa hè cho xe Tesla Model 3
-                                </p>
-                                <div class="d-flex gap-3 small">
-                                    <span class="text-muted">
-                                        <i class="bi bi-calendar me-1"></i>Kết thúc: 30/10/2024
-                                    </span>
-                                    <span class="text-muted">
-                                        <i class="bi bi-check-circle me-1"></i>3/4 đã bỏ phiếu
-                                    </span>
-                                </div>
-                                <div class="progress mt-2" style="height: 6px;">
-                                    <div class="progress-bar bg-warning" style="width: 75%"></div>
-                                </div>
-                            </div>
-                            <div class="ms-3">
-                                <button class="btn btn-sm btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Bỏ phiếu
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group-item px-0">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Bình chọn đổi màu xe</h6>
-                                <p class="text-muted mb-2 small">
-                                    Đề xuất sơn lại xe từ đen sang trắng
-                                </p>
-                                <div class="d-flex gap-3 small">
-                                    <span class="text-muted">
-                                        <i class="bi bi-calendar me-1"></i>Kết thúc: 05/11/2024
-                                    </span>
-                                    <span class="text-muted">
-                                        <i class="bi bi-check-circle me-1"></i>2/4 đã bỏ phiếu
-                                    </span>
-                                </div>
-                                <div class="progress mt-2" style="height: 6px;">
-                                    <div class="progress-bar bg-info" style="width: 50%"></div>
+                    @{
+                        var activeSessions = Model.Group?.VotingSessions?.Where(v => v.Status == Co_owner_Vehicle.Models.VotingStatus.Active).OrderByDescending(v => v.CreatedAt).ToList() ?? new List<Co_owner_Vehicle.Models.VotingSession>();
+                    }
+                    @if (activeSessions.Any())
+                    {
+                        foreach (var s in activeSessions)
+                        {
+                            var totalVotes = s.Votes?.Count ?? 0;
+                            var memberCount = Model.Members.Count;
+                            var progress = memberCount > 0 ? (int)Math.Round((double)totalVotes * 100 / memberCount) : 0;
+                            <div class="list-group-item px-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">@s.Title</h6>
+                                        <p class="text-muted mb-2 small">@s.Description</p>
+                                        <div class="d-flex gap-3 small">
+                                            <span class="text-muted">
+                                                <i class="bi bi-calendar me-1"></i>Kết thúc: @s.EndDate?.ToLocalTime().ToString("dd/MM/yyyy")
+                                            </span>
+                                            <span class="text-muted">
+                                                <i class="bi bi-check-circle me-1"></i>@totalVotes/@memberCount đã bỏ phiếu
+                                            </span>
+                                        </div>
+                                        <div class="progress mt-2" style="height: 6px;">
+                                            <div class="progress-bar bg-info" style="width: @progress%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-3">
+                                        <a asp-page="/Groups/Voting" asp-route-id="@s.VotingSessionId" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-check-lg me-1"></i>Bỏ phiếu
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="ms-3">
-                                <button class="btn btn-sm btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Bỏ phiếu
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-muted">Không có phiên voting nào đang mở.</div>
+                    }
                 </div>
                 <div class="text-center mt-3">
                     <a href="#" class="text-decoration-none">
@@ -451,21 +317,21 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary">
+                    <a class="btn btn-outline-primary" asp-page="/Groups/Details" asp-route-id="@Model.Group?.CoOwnerGroupId" asp-fragment="members">
                         <i class="bi bi-person-plus me-2"></i>Thêm thành viên
-                    </button>
-                    <button class="btn btn-outline-success">
+                    </a>
+                    <a class="btn btn-outline-success" asp-page="/Groups/Voting" asp-route-groupId="@Model.Group?.CoOwnerGroupId">
                         <i class="bi bi-clipboard-check me-2"></i>Tạo voting
-                    </button>
-                    <button class="btn btn-outline-info">
+                    </a>
+                    <a class="btn btn-outline-info" asp-page="/Expenses/Create" asp-route-groupId="@Model.Group?.CoOwnerGroupId">
                         <i class="bi bi-receipt me-2"></i>Thêm chi phí
-                    </button>
-                    <button class="btn btn-outline-warning">
+                    </a>
+                    <a class="btn btn-outline-warning" asp-page="/Bookings/Index" asp-route-vehicleId="@Model.Group?.VehicleId">
                         <i class="bi bi-calendar-event me-2"></i>Xem lịch đặt
-                    </button>
-                    <button class="btn btn-outline-secondary">
+                    </a>
+                    <a class="btn btn-outline-secondary" asp-page="/Reports/Financial" asp-route-groupId="@Model.Group?.CoOwnerGroupId">
                         <i class="bi bi-file-earmark-text me-2"></i>Xuất báo cáo
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -480,19 +346,19 @@
             <div class="card-body">
                 <div class="mb-3 pb-3 border-bottom">
                     <small class="text-muted">Tổng chi phí tháng này</small>
-                    <h4 class="fw-bold mb-0">2,500,000 đ</h4>
+                    <h4 class="fw-bold mb-0">@Model.Stats.MonthExpense.ToString("#,##0") đ</h4>
                 </div>
                 <div class="mb-3 pb-3 border-bottom">
                     <small class="text-muted">Số lượt đặt xe</small>
-                    <h4 class="fw-bold mb-0">28 lượt</h4>
+                    <h4 class="fw-bold mb-0">@Model.Stats.BookingCount lượt</h4>
                 </div>
                 <div class="mb-3 pb-3 border-bottom">
                     <small class="text-muted">Tổng số km</small>
-                    <h4 class="fw-bold mb-0">2,450 km</h4>
+                    <h4 class="fw-bold mb-0">@Model.Stats.TotalKm.ToString("#,##0") km</h4>
                 </div>
                 <div>
                     <small class="text-muted">Ngày tạo nhóm</small>
-                    <h6 class="fw-bold mb-0">01/09/2024</h6>
+                    <h6 class="fw-bold mb-0">@Model.Stats.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</h6>
                 </div>
             </div>
         </div>
@@ -506,7 +372,7 @@
             </div>
             <div class="card-body">
                 <div class="text-center mb-3">
-                    <h3 class="fw-bold text-success mb-1">5,500,000 đ</h3>
+                    <h3 class="fw-bold text-success mb-1">@Model.Stats.FundBalance.ToString("#,##0") đ</h3>
                     <small class="text-muted">Số dư hiện tại</small>
                 </div>
                 <div class="d-grid gap-2">
@@ -525,20 +391,31 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Ownership Chart
+        // Ownership Chart - dynamic from server data
         const ownershipCtx = document.getElementById('ownershipChart').getContext('2d');
+        const ownershipLabels = [
+            @for (int i = 0; i < Model.Members.Count; i++)
+            {
+                var m = Model.Members[i];
+                @: "@m.User.FullName"@((i < Model.Members.Count - 1) ? "," : string.Empty)
+            }
+        ];
+        const ownershipData = [
+            @for (int i = 0; i < Model.Members.Count; i++)
+            {
+                var m = Model.Members[i];
+                var sh = Model.Shares.FirstOrDefault(s => s.UserId == m.UserId)?.Percentage ?? (i==0 && Model.Members.Count==1 ? 100 : 0);
+                @: @sh@((i < Model.Members.Count - 1) ? "," : string.Empty)
+            }
+        ];
+        const palette = ['#36A2EB','#4BC0C0','#FFCE56','#9966FF','#FF6384','#2ecc71','#e67e22'];
         new Chart(ownershipCtx, {
             type: 'pie',
             data: {
-                labels: ['Nguyễn Văn A', 'Lê Thị B', 'Trần Văn C', 'Phạm Văn D'],
+                labels: ownershipLabels,
                 datasets: [{
-                    data: [30, 30, 25, 15],
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(75, 192, 192, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(153, 102, 255, 0.8)'
-                    ],
+                    data: ownershipData.length ? ownershipData : [100],
+                    backgroundColor: ownershipLabels.map((_, idx) => palette[idx % palette.length]),
                     borderWidth: 2,
                     borderColor: '#fff'
                 }]
@@ -547,19 +424,85 @@
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed + '%';
-                            }
-                        }
-                    }
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}%` } }
                 }
             }
         });
     </script>
 }
+
+<!-- Add Member Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Thêm thành viên</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" asp-page-handler="AddMember" asp-route-id="@Model.Group?.CoOwnerGroupId">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Chọn người dùng</label>
+            <select asp-for="SelectedUserId" class="form-select" required>
+              <option value="">-- Chọn người dùng --</option>
+              @foreach (var u in Model.UsersForAdd)
+              {
+                <option value="@u.UserId">@u.FullName (@u.Email)</option>
+              }
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tỷ lệ sở hữu (%)</label>
+            <input asp-for="NewMemberShare" class="form-control" type="number" min="0" max="100" step="0.1" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Vai trò</label>
+            <select asp-for="NewMemberRole" class="form-select" asp-items="Html.GetEnumSelectList<Co_owner_Vehicle.Models.MemberRole>()"></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+
+<!-- Create Voting Modal -->
+<div class="modal fade" id="createVotingModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-clipboard-check me-2"></i>Tạo voting mới</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" asp-page-handler="CreateVoting" asp-route-id="@Model.Group?.CoOwnerGroupId">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Tiêu đề</label>
+            <input asp-for="VotingTitle" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea asp-for="VotingDescription" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Loại quyết định</label>
+            <select asp-for="VotingDecisionType" class="form-select" asp-items="Html.GetEnumSelectList<Co_owner_Vehicle.Models.DecisionType>()"></select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Ngày kết thúc</label>
+            <input asp-for="VotingEndDate" type="date" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Tạo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 

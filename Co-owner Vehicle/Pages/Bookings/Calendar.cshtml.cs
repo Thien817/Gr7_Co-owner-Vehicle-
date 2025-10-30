@@ -53,6 +53,26 @@ namespace Co_owner_Vehicle.Pages.Bookings
             public string Title { get; set; } = string.Empty;
         }
 
+        // Create booking form
+        [BindProperty]
+        public int SelectedVehicleId { get; set; }
+        [BindProperty]
+        public DateTime? StartDate { get; set; }
+        [BindProperty]
+        public TimeSpan? StartTimeOfDay { get; set; }
+        [BindProperty]
+        public DateTime? EndDate { get; set; }
+        [BindProperty]
+        public TimeSpan? EndTimeOfDay { get; set; }
+        [BindProperty]
+        public string? Purpose { get; set; }
+        [BindProperty]
+        public string? PickupLocation { get; set; }
+        [BindProperty]
+        public string? ReturnLocation { get; set; }
+        [BindProperty]
+        public string? Notes { get; set; }
+
         public async Task OnGetAsync()
         {
             var userId = this.GetCurrentUserId();
@@ -127,6 +147,51 @@ namespace Co_owner_Vehicle.Pages.Bookings
                 .OrderBy(b => b.StartTime)
                 .Take(5)
                 .ToList();
+        }
+
+        public async Task<IActionResult> OnPostCreateAsync()
+        {
+            var userId = this.GetCurrentUserId();
+            if (SelectedVehicleId <= 0 || !StartDate.HasValue || !StartTimeOfDay.HasValue || !EndDate.HasValue || !EndTimeOfDay.HasValue || string.IsNullOrWhiteSpace(Purpose))
+            {
+                ModelState.AddModelError(string.Empty, "Vui lòng nhập đầy đủ thông tin đặt lịch");
+                await OnGetAsync();
+                return Page();
+            }
+
+            var start = StartDate.Value.Date + StartTimeOfDay.Value;
+            var end = EndDate.Value.Date + EndTimeOfDay.Value;
+            if (end <= start)
+            {
+                ModelState.AddModelError(string.Empty, "Thời gian kết thúc phải sau thời gian bắt đầu");
+                await OnGetAsync();
+                return Page();
+            }
+
+            var available = await _bookingService.IsTimeSlotAvailableAsync(SelectedVehicleId, start, end, null);
+            if (!available)
+            {
+                ModelState.AddModelError(string.Empty, "Khung thời gian đã có người đặt");
+                await OnGetAsync();
+                return Page();
+            }
+
+            var booking = new BookingSchedule
+            {
+                VehicleId = SelectedVehicleId,
+                UserId = userId,
+                StartTime = start,
+                EndTime = end,
+                Purpose = Purpose!,
+                PickupLocation = PickupLocation,
+                ReturnLocation = ReturnLocation,
+                Notes = Notes,
+                Status = BookingStatus.Pending
+            };
+
+            await _bookingService.CreateBookingAsync(booking);
+            TempData["SuccessMessage"] = "Đã tạo yêu cầu đặt lịch";
+            return RedirectToPage(new { VehicleId, Year, Month });
         }
 
         private string GetBookingColor(BookingStatus status)

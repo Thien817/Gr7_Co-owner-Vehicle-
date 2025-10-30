@@ -30,10 +30,37 @@
         </a>
         
         <nav class="sidebar-nav">
-            <a asp-page="/Dashboard/CoOwner" class="sidebar-link active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    <a asp-page="/Dashboard/Admin" class="sidebar-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                }
+                else if (User.IsInRole("Staff"))
+                {
+                    <a asp-page="/Dashboard/Staff" class="sidebar-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-page="/Dashboard/CoOwner" class="sidebar-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                }
+            }
+            else
+            {
+                <a asp-page="/Dashboard/CoOwner" class="sidebar-link active">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            }
             
             <a asp-page="/Vehicles/Index" class="sidebar-link">
                 <i class="bi bi-car-front"></i>
@@ -97,48 +124,38 @@
                 <div class="dropdown">
                     <button class="btn btn-link position-relative" type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-bell fs-5"></i>
-                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
-                            3
-                        </span>
+                        @{ var notifs = ViewData["Notifications"] as System.Collections.IEnumerable; var notifCount = 0; if (notifs != null) { foreach (var _ in notifs) { notifCount++; } } }
+                        @if (notifCount > 0)
+                        {
+                            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">@notifCount</span>
+                        }
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
                         <li class="dropdown-header">
                             <strong>Thông báo</strong>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item notification-item" href="#">
-                                <div class="notification-icon bg-primary">
-                                    <i class="bi bi-calendar-check"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <strong>Lịch đặt xe được duyệt</strong>
-                                    <small>Tesla Model 3 - 29/10/2024</small>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item notification-item" href="#">
-                                <div class="notification-icon bg-warning">
-                                    <i class="bi bi-receipt"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <strong>Chi phí mới chờ duyệt</strong>
-                                    <small>Phí sạc điện - 500.000đ</small>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item notification-item" href="#">
-                                <div class="notification-icon bg-success">
-                                    <i class="bi bi-credit-card"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <strong>Thanh toán thành công</strong>
-                                    <small>2.000.000đ - Bảo dưỡng</small>
-                                </div>
-                            </a>
-                        </li>
+                        @if (notifCount == 0)
+                        {
+                            <li class="px-3 text-muted">Không có thông báo</li>
+                        }
+                        else
+                        {
+                            foreach (dynamic n in notifs)
+                            {
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="notification-icon @n.Color">
+                                            <i class="bi @n.Icon"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <strong>@n.Title</strong>
+                                            <small>@n.Sub</small>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        }
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-center text-primary" href="#">

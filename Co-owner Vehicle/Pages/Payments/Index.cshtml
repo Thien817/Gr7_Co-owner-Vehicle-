@@ -24,7 +24,7 @@
             <div class="stat-card-icon success">
                 <i class="bi bi-check-circle"></i>
             </div>
-            <div class="stat-card-value">8.5M</div>
+            <div class="stat-card-value">@Model.PaidTotal.ToString("#,##0")</div>
             <div class="stat-card-label">Đã thanh toán</div>
             <div class="stat-card-change positive">
                 <i class="bi bi-arrow-up"></i> Tháng này
@@ -37,10 +37,10 @@
             <div class="stat-card-icon danger">
                 <i class="bi bi-exclamation-circle"></i>
             </div>
-            <div class="stat-card-value">2.4M</div>
+            <div class="stat-card-value">@Model.Outstanding.ToString("#,##0")</div>
             <div class="stat-card-label">Công nợ chưa trả</div>
             <div class="stat-card-change negative">
-                <i class="bi bi-clock-history"></i> 3 khoản
+                <i class="bi bi-clock-history"></i> @Model.OutstandingCount khoản
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
             <div class="stat-card-icon warning">
                 <i class="bi bi-hourglass-split"></i>
             </div>
-            <div class="stat-card-value" data-value="5">0</div>
+            <div class="stat-card-value">@Model.ProcessingCount</div>
             <div class="stat-card-label">Đang xử lý</div>
             <div class="stat-card-change">
                 Chờ xác nhận
@@ -63,7 +63,7 @@
             <div class="stat-card-icon primary">
                 <i class="bi bi-wallet2"></i>
             </div>
-            <div class="stat-card-value" data-value="24">0</div>
+            <div class="stat-card-value">@Model.TotalTransactions</div>
             <div class="stat-card-label">Tổng giao dịch</div>
             <div class="stat-card-change">
                 Tất cả thời gian
@@ -73,16 +73,19 @@
 </div>
 
 <!-- Outstanding Payments Alert -->
+@if (Model.Outstanding > 0)
+{
 <div class="alert alert-warning d-flex align-items-center mb-4">
     <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
     <div class="flex-grow-1">
-        <strong>Bạn có 3 khoản công nợ chưa thanh toán!</strong><br>
-        <small>Tổng: 2,400,000₫ - Hạn cuối: 31/10/2024</small>
+        <strong>Bạn có @Model.OutstandingCount khoản công nợ chưa thanh toán!</strong><br>
+        <small>Tổng: @Model.Outstanding.ToString("#,##0")₫</small>
     </div>
     <button class="btn btn-warning">
         <i class="bi bi-credit-card me-2"></i>Thanh toán ngay
     </button>
 </div>
+}
 
 <!-- Filters -->
 <div class="card mb-4">
@@ -147,200 +150,62 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Payment 1 - Success -->
-                    <tr>
-                        <td>
-                            <strong class="text-primary">#PAY00124</strong><br>
-                            <small class="text-muted">Ref: VNP123456</small>
-                        </td>
-                        <td>
-                            <strong>Phí sạc điện</strong><br>
-                            <small class="text-muted">Tesla Model 3 - Tháng 10</small>
-                        </td>
-                        <td>
-                            25/10/2024<br>
-                            <small class="text-muted">14:30</small>
-                        </td>
-                        <td>
-                            <strong class="text-success">200,000₫</strong>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-wallet2 text-primary"></i>
-                                <span>VNPay</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-success">
-                                <i class="bi bi-check-circle me-1"></i>Thành công
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-receipt"></i> Biên lai
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Payment 2 - Pending -->
-                    <tr class="table-warning">
-                        <td>
-                            <strong class="text-warning">#PAY00125</strong><br>
-                            <small class="text-muted">Chưa có ref</small>
-                        </td>
-                        <td>
-                            <strong>Bảo dưỡng định kỳ</strong><br>
-                            <small class="text-muted">VinFast VF8 - 15,000km</small>
-                        </td>
-                        <td>
-                            27/10/2024<br>
-                            <small class="text-muted">09:15</small>
-                        </td>
-                        <td>
-                            <strong class="text-warning">1,400,000₫</strong>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-phone text-danger"></i>
-                                <span>MoMo</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-warning">
-                                <i class="bi bi-clock-history me-1"></i>Đang xử lý
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-info-circle"></i> Chi tiết
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Payment 3 - Outstanding -->
-                    <tr class="table-danger">
-                        <td>
-                            <strong class="text-danger">#PAY00126</strong><br>
-                            <small class="text-muted">Chưa thanh toán</small>
-                        </td>
-                        <td>
-                            <strong>Rửa xe ngoại thất</strong><br>
-                            <small class="text-muted">Tesla Model 3</small>
-                        </td>
-                        <td>
-                            <span class="text-danger">Hạn: 31/10/2024</span><br>
-                            <small class="text-muted">Còn 2 ngày</small>
-                        </td>
-                        <td>
-                            <strong class="text-danger">120,000₫</strong>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-dash-circle text-muted"></i>
-                                <span class="text-muted">Chưa chọn</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-danger">
-                                <i class="bi bi-exclamation-circle me-1"></i>Chưa trả
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-danger">
-                                <i class="bi bi-credit-card me-1"></i>Thanh toán
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Payment 4 - Success -->
-                    <tr>
-                        <td>
-                            <strong class="text-primary">#PAY00123</strong><br>
-                            <small class="text-muted">Ref: ZALO789456</small>
-                        </td>
-                        <td>
-                            <strong>Bảo hiểm xe</strong><br>
-                            <small class="text-muted">Honda Civic - Quý 4</small>
-                        </td>
-                        <td>
-                            15/10/2024<br>
-                            <small class="text-muted">10:20</small>
-                        </td>
-                        <td>
-                            <strong class="text-success">3,000,000₫</strong>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-phone text-info"></i>
-                                <span>ZaloPay</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-success">
-                                <i class="bi bi-check-circle me-1"></i>Thành công
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-receipt"></i> Biên lai
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Payment 5 - Success -->
-                    <tr>
-                        <td>
-                            <strong class="text-primary">#PAY00122</strong><br>
-                            <small class="text-muted">Ref: BANK456123</small>
-                        </td>
-                        <td>
-                            <strong>Phí sạc điện</strong><br>
-                            <small class="text-muted">VinFast VF8 - Tháng 9</small>
-                        </td>
-                        <td>
-                            08/10/2024<br>
-                            <small class="text-muted">16:45</small>
-                        </td>
-                        <td>
-                            <strong class="text-success">280,000₫</strong>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-bank text-success"></i>
-                                <span>Chuyển khoản</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-success">
-                                <i class="bi bi-check-circle me-1"></i>Thành công
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-receipt"></i> Biên lai
-                            </button>
-                        </td>
-                    </tr>
+                    @if (Model.Payments.Any())
+                    {
+                        foreach (var p in Model.Payments.OrderByDescending(p => p.PaymentDate))
+                        {
+                            var statusBadge = p.Status switch { 
+                                Co_owner_Vehicle.Models.PaymentStatus.Completed => "badge bg-success",
+                                Co_owner_Vehicle.Models.PaymentStatus.Pending => "badge bg-warning",
+                                Co_owner_Vehicle.Models.PaymentStatus.Processing => "badge bg-warning",
+                                Co_owner_Vehicle.Models.PaymentStatus.Failed => "badge bg-danger",
+                                _ => "badge bg-secondary"
+                            };
+                            <tr class="@(p.Status == Co_owner_Vehicle.Models.PaymentStatus.Pending ? "table-warning" : p.Status == Co_owner_Vehicle.Models.PaymentStatus.Failed ? "table-danger" : null)">
+                                <td>
+                                    <strong class="text-primary">@p.TransactionId</strong><br>
+                                    <small class="text-muted">Ref: @p.PaymentReference</small>
+                                </td>
+                                <td>
+                                    <strong>@p.Description</strong><br>
+                                    <small class="text-muted">@p.Expense?.ExpenseCategory?.CategoryName</small>
+                                </td>
+                                <td>
+                                    @p.PaymentDate.ToLocalTime().ToString("dd/MM/yyyy")<br>
+                                    <small class="text-muted">@p.PaymentDate.ToLocalTime().ToString("HH:mm")</small>
+                                </td>
+                                <td>
+                                    <strong class="@(p.Status == Co_owner_Vehicle.Models.PaymentStatus.Completed ? "text-success" : p.Status==Co_owner_Vehicle.Models.PaymentStatus.Failed?"text-danger":"text-warning")">@p.Amount.ToString("#,##0")₫</strong>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-wallet2 text-primary"></i>
+                                        <span>@p.PaymentMethod</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="@statusBadge">@p.Status</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a class="btn btn-sm btn-outline-primary">Biên lai</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-center text-muted">Không có giao dịch</td></tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
     <div class="card-footer bg-transparent">
         <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Hiển thị 1-5 trong 24 giao dịch</small>
-            <nav>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#">Trước</a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Sau</a>
-                    </li>
-                </ul>
-            </nav>
+            <small class="text-muted">Tổng giao dịch: @Model.TotalTransactions</small>
+            
         </div>
     </div>
 </div>

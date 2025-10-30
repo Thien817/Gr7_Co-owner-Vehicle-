@@ -5,6 +5,7 @@ using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Models;
 using Co_owner_Vehicle.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Co_owner_Vehicle.Services.Interfaces;
 
 namespace Co_owner_Vehicle.Pages.Groups
 {
@@ -12,10 +13,12 @@ namespace Co_owner_Vehicle.Pages.Groups
     public class VotingModel : PageModel
     {
         private readonly CoOwnerVehicleDbContext _context;
+        private readonly IVotingService _votingService;
 
-        public VotingModel(CoOwnerVehicleDbContext context)
+        public VotingModel(CoOwnerVehicleDbContext context, IVotingService votingService)
         {
             _context = context;
+            _votingService = votingService;
         }
 
         public VotingSessionViewModel? VotingSession { get; set; }
@@ -35,7 +38,7 @@ namespace Co_owner_Vehicle.Pages.Groups
                 .Include(v => v.CreatedByUser)
                 .Include(v => v.Votes)
                     .ThenInclude(v => v.User)
-                .FirstOrDefaultAsync(v => v.VotingSessionId == id);
+                .FirstOrDefaultAsync(v => v.VotingSessionId == id.Value);
 
             if (votingSession == null)
                 return NotFound();
@@ -59,7 +62,8 @@ namespace Co_owner_Vehicle.Pages.Groups
             {
                 VotingSessionId = votingSession.VotingSessionId,
                 CoOwnerGroupId = votingSession.CoOwnerGroupId,
-                GroupName = votingSession.CoOwnerGroup?.Vehicle?.Brand + " " + votingSession.CoOwnerGroup?.Vehicle?.Model ?? "Nhóm",
+                CoOwnerGroup = votingSession.CoOwnerGroup,
+                GroupName = votingSession.CoOwnerGroup?.GroupName ?? "Nhóm",
                 VehicleInfo = votingSession.CoOwnerGroup?.Vehicle != null 
                     ? $"{votingSession.CoOwnerGroup.Vehicle.LicensePlate}" 
                     : "",
@@ -69,6 +73,7 @@ namespace Co_owner_Vehicle.Pages.Groups
                 Status = votingSession.Status,
                 CreatedAt = votingSession.CreatedAt,
                 CreatedBy = votingSession.CreatedByUser?.FullName ?? "System",
+                CreatedByUser = votingSession.CreatedByUser,
                 StartDate = votingSession.StartDate,
                 EndDate = votingSession.EndDate,
                 RequiredVotes = votingSession.RequiredVotes ?? totalMembers,
@@ -82,6 +87,7 @@ namespace Co_owner_Vehicle.Pages.Groups
                     VoteId = v.VoteId,
                     UserId = v.UserId,
                     UserName = v.User?.FullName ?? "Unknown",
+                    User = v.User,
                     UserInitials = GetInitials(v.User?.FullName ?? "U"),
                     Choice = v.Choice,
                     Comments = v.Comments,
@@ -114,31 +120,7 @@ namespace Co_owner_Vehicle.Pages.Groups
             }
 
             // Check if user has already voted
-            var existingVote = await _context.Votes
-                .FirstOrDefaultAsync(v => v.VotingSessionId == id && v.UserId == currentUserId);
-
-            if (existingVote != null)
-            {
-                // Update existing vote
-                existingVote.Choice = choice;
-                existingVote.Comments = comments;
-                existingVote.VotedAt = DateTime.UtcNow;
-            }
-            else
-            {
-                // Create new vote
-                var newVote = new Vote
-                {
-                    VotingSessionId = id,
-                    UserId = currentUserId,
-                    Choice = choice,
-                    Comments = comments,
-                    VotedAt = DateTime.UtcNow
-                };
-                _context.Votes.Add(newVote);
-            }
-
-            await _context.SaveChangesAsync();
+            await _votingService.CastOrUpdateVoteAsync(id, currentUserId, choice, comments);
 
             return RedirectToPage(new { id });
         }
@@ -160,6 +142,7 @@ namespace Co_owner_Vehicle.Pages.Groups
     {
         public int VotingSessionId { get; set; }
         public int CoOwnerGroupId { get; set; }
+        public CoOwnerGroup? CoOwnerGroup { get; set; }
         public string GroupName { get; set; } = string.Empty;
         public string VehicleInfo { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
@@ -168,6 +151,7 @@ namespace Co_owner_Vehicle.Pages.Groups
         public VotingStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; } = string.Empty;
+        public User? CreatedByUser { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public int RequiredVotes { get; set; }
@@ -184,6 +168,7 @@ namespace Co_owner_Vehicle.Pages.Groups
     {
         public int VoteId { get; set; }
         public int UserId { get; set; }
+        public User? User { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string UserInitials { get; set; } = string.Empty;
         public VoteChoice Choice { get; set; }

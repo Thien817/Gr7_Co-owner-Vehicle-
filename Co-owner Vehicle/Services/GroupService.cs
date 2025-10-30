@@ -23,6 +23,8 @@ namespace Co_owner_Vehicle.Services
                     .ThenInclude(gm => gm.User)
                 .Include(g => g.OwnershipShares)
                     .ThenInclude(os => os.User)
+                .Include(g => g.VotingSessions)
+                    .ThenInclude(vs => vs.Votes)
                 .FirstOrDefaultAsync(g => g.CoOwnerGroupId == groupId);
         }
 

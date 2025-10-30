@@ -50,11 +50,11 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label small">Từ ngày</label>
-                <input type="date" class="form-control" value="2024-10-01">
+                <input asp-for="From" type="date" class="form-control">
             </div>
             <div class="col-md-3">
                 <label class="form-label small">Đến ngày</label>
-                <input type="date" class="form-control" value="2024-10-31">
+                <input asp-for="To" type="date" class="form-control">
             </div>
             <div class="col-md-1">
                 <button class="btn btn-primary w-100">
@@ -72,7 +72,7 @@
             <div class="stat-card-icon danger">
                 <i class="bi bi-arrow-up-circle"></i>
             </div>
-            <div class="stat-card-value">12.8M</div>
+            <div class="stat-card-value">@Model.TotalExpenses.ToString("#,##0")</div>
             <div class="stat-card-label">Tổng chi phí</div>
             <div class="stat-card-change negative">
                 <i class="bi bi-arrow-down"></i> -8% so tháng trước
@@ -85,10 +85,11 @@
             <div class="stat-card-icon success">
                 <i class="bi bi-arrow-down-circle"></i>
             </div>
-            <div class="stat-card-value">10.4M</div>
+            <div class="stat-card-value">@Model.TotalPayments.ToString("#,##0")</div>
             <div class="stat-card-label">Đã thanh toán</div>
             <div class="stat-card-change positive">
-                <i class="bi bi-check-circle"></i> 81% đã trả
+                @{ var paidPct = Model.TotalExpenses > 0 ? (int)Math.Round((double)(Model.TotalPayments / Model.TotalExpenses * 100)) : 0; }
+                <i class="bi bi-check-circle"></i> @paidPct% đã trả
             </div>
         </div>
     </div>
@@ -98,10 +99,12 @@
             <div class="stat-card-icon warning">
                 <i class="bi bi-exclamation-circle"></i>
             </div>
-            <div class="stat-card-value">2.4M</div>
+            @{ var debt = Model.TotalExpenses - Model.TotalPayments; }
+            <div class="stat-card-value">@debt.ToString("#,##0")</div>
             <div class="stat-card-label">Công nợ</div>
             <div class="stat-card-change">
-                <i class="bi bi-clock-history"></i> 19% chưa trả
+                @{ var debtPct = Model.TotalExpenses > 0 ? (int)Math.Round((double)(debt / Model.TotalExpenses * 100)) : 0; }
+                <i class="bi bi-clock-history"></i> @debtPct% chưa trả
             </div>
         </div>
     </div>
@@ -111,7 +114,8 @@
             <div class="stat-card-icon primary">
                 <i class="bi bi-graph-up"></i>
             </div>
-            <div class="stat-card-value">3.2M</div>
+            @{ var months = 0; if (Model.From.HasValue && Model.To.HasValue) { var a = Model.From.Value; var b = Model.To.Value; months = ((b.Year * 12 + b.Month) - (a.Year * 12 + a.Month)) + 1; } var avg = months > 0 ? Model.TotalExpenses / months : 0; }
+            <div class="stat-card-value">@avg.ToString("#,##0")</div>
             <div class="stat-card-label">Trung bình/tháng</div>
             <div class="stat-card-change">
                 <i class="bi bi-info-circle"></i> 6 tháng gần nhất
@@ -145,46 +149,22 @@
                     </div>
                     <div class="col-md-6">
                         <div class="category-list">
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="category-dot" style="background: #4F46E5;"></div>
-                                    <span>Phí sạc điện</span>
+                            @{ var total = Model.ExpensesByCategory.Values.Sum(); var colors = new [] { "#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#06b6d4", "#8b5cf6" }; var idx = 0; }
+                            @foreach (var item in Model.ExpensesByCategory.OrderByDescending(kv => kv.Value))
+                            {
+                                var pct = total > 0 ? Math.Round(item.Value * 100 / total, 1) : 0;
+                                var color = colors[idx++ % colors.Length];
+                                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="category-dot" style="background: @color;"></div>
+                                        <span>@item.Key</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>@item.Value.ToString("#,##0")</strong><br>
+                                        <small class="text-muted">@pct%</small>
+                                    </div>
                                 </div>
-                                <div class="text-end">
-                                    <strong class="text-primary">3.5M</strong><br>
-                                    <small class="text-muted">27.3%</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="category-dot" style="background: #10B981;"></div>
-                                    <span>Bảo dưỡng</span>
-                                </div>
-                                <div class="text-end">
-                                    <strong class="text-success">4.2M</strong><br>
-                                    <small class="text-muted">32.8%</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="category-dot" style="background: #F59E0B;"></div>
-                                    <span>Bảo hiểm</span>
-                                </div>
-                                <div class="text-end">
-                                    <strong class="text-warning">2.8M</strong><br>
-                                    <small class="text-muted">21.9%</small>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="category-dot" style="background: #EF4444;"></div>
-                                    <span>Khác</span>
-                                </div>
-                                <div class="text-end">
-                                    <strong class="text-danger">2.3M</strong><br>
-                                    <small class="text-muted">18.0%</small>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -200,36 +180,26 @@
                 <i class="bi bi-star me-2"></i>Chi phí cao nhất
             </div>
             <div class="card-body">
-                <div class="mb-3 pb-3 border-bottom">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong>Bảo hiểm xe</strong>
-                        <span class="badge bg-danger">Cao nhất</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted">Honda Civic</small>
-                        <strong class="text-danger">5,000,000₫</strong>
-                    </div>
-                </div>
-                <div class="mb-3 pb-3 border-bottom">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong>Bảo dưỡng định kỳ</strong>
-                        <span class="badge bg-warning">Cao</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted">Tesla Model 3</small>
-                        <strong class="text-warning">2,000,000₫</strong>
-                    </div>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <strong>Phí sạc điện</strong>
-                        <span class="badge bg-info">Trung bình</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted">VinFast VF8</small>
-                        <strong class="text-info">500,000₫</strong>
-                    </div>
-                </div>
+                @if (Model.TopExpenses.Any())
+                {
+                    foreach (var e in Model.TopExpenses)
+                    {
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <strong>@(e.ExpenseCategory?.CategoryName ?? "Chi phí")</strong>
+                                <span class="badge bg-secondary">@e.ExpenseDate.ToLocalTime().ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">@(e.Vehicle != null ? e.Vehicle.Brand + " " + e.Vehicle.Model : "Không rõ xe")</small>
+                                <strong>@e.Amount.ToString("#,##0")</strong>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted">Không có dữ liệu</div>
+                }
             </div>
         </div>
 
@@ -239,46 +209,33 @@
                 <i class="bi bi-car-front me-2"></i>Chi phí theo xe
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tesla Model 3</span>
-                        <strong class="text-primary">4.5M</strong>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-primary" style="width: 35%"></div>
-                    </div>
-                    <small class="text-muted">35% tổng chi phí</small>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>VinFast VF8</span>
-                        <strong class="text-success">3.8M</strong>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 30%"></div>
-                    </div>
-                    <small class="text-muted">30% tổng chi phí</small>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Honda Civic</span>
-                        <strong class="text-warning">2.5M</strong>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-warning" style="width: 20%"></div>
-                    </div>
-                    <small class="text-muted">20% tổng chi phí</small>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Toyota Prius</span>
-                        <strong class="text-info">2.0M</strong>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-info" style="width: 15%"></div>
-                    </div>
-                    <small class="text-muted">15% tổng chi phí</small>
-                </div>
+                @{
+                    var totalByVehicle = Model.ExpensesByVehicle.Values.Sum();
+                    var vehicleIdx = 0;
+                    var vehicleColors = new [] { "primary", "success", "warning", "info", "secondary" };
+                }
+                @if (totalByVehicle == 0)
+                {
+                    <div class="text-muted">Không có dữ liệu</div>
+                }
+                else
+                {
+                    foreach (var kv in Model.ExpensesByVehicle.OrderByDescending(k => k.Value))
+                    {
+                        var pct = totalByVehicle > 0 ? (int)Math.Round(kv.Value * 100 / totalByVehicle) : 0;
+                        var color = vehicleColors[vehicleIdx++ % vehicleColors.Length];
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>@kv.Key</span>
+                                <strong class="text-@color">@kv.Value.ToString("#,##0")</strong>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-@color" style="width: @pct%"></div>
+                            </div>
+                            <small class="text-muted">@pct% tổng chi phí</small>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>
@@ -331,27 +288,33 @@
 
         // Category Pie Chart
         const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+        const categoryLabels = [
+            @for (int i = 0; i < Model.ExpensesByCategory.Count; i++) {
+                var key = Model.ExpensesByCategory.ElementAt(i).Key;
+                @: '@key'@((i < Model.ExpensesByCategory.Count - 1) ? "," : string.Empty)
+            }
+        ];
+        const categoryData = [
+            @for (int i = 0; i < Model.ExpensesByCategory.Count; i++) {
+                var val = Model.ExpensesByCategory.ElementAt(i).Value;
+                @: @val@((i < Model.ExpensesByCategory.Count - 1) ? "," : string.Empty)
+            }
+        ];
+        const palette = ['#4F46E5','#10B981','#F59E0B','#EF4444','#06b6d4','#8b5cf6'];
         new Chart(pieCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Phí sạc điện', 'Bảo dưỡng', 'Bảo hiểm', 'Khác'],
+                labels: categoryLabels,
                 datasets: [{
-                    data: [3500000, 4200000, 2800000, 2300000],
-                    backgroundColor: [
-                        '#4F46E5',
-                        '#10B981',
-                        '#F59E0B',
-                        '#EF4444'
-                    ],
+                    data: categoryData.length ? categoryData : [1],
+                    backgroundColor: categoryLabels.map((_, idx) => palette[idx % palette.length]),
                     borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
+                    legend: { position: 'bottom' }
                 }
             }
         });

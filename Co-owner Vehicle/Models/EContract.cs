@@ -33,6 +33,8 @@ namespace Co_owner_Vehicle.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public DateTime? UpdatedAt { get; set; }
+
         public DateTime? SignedAt { get; set; }
 
         public DateTime? ExpiresAt { get; set; }

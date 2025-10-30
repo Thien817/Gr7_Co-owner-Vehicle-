@@ -50,6 +50,12 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ICommonFundService, CommonFundService>();
+builder.Services.AddScoped<IVotingService, VotingService>();
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IServiceRecordService, ServiceRecordService>();
+builder.Services.AddScoped<IReportsService, ReportsService>();
+builder.Services.AddScoped<ICheckInOutService, CheckInOutService>();
 
 var app = builder.Build();
 

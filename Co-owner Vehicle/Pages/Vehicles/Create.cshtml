@@ -30,73 +30,61 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form>
+                <form method="post">
+                    <input type="hidden" asp-for="Input.VehicleId" />
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Hãng xe <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" placeholder="VD: Tesla, Toyota, Honda..." required>
+                            <input asp-for="Input.Brand" class="form-control" placeholder="VD: Tesla, Toyota, Honda..." required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Model <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" placeholder="VD: Model 3, Camry, Civic..." required>
+                            <input asp-for="Input.Model" class="form-control" placeholder="VD: Model 3, Camry, Civic..." required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Biển số xe <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" placeholder="VD: 30A-12345" required>
+                            <input asp-for="Input.LicensePlate" class="form-control" placeholder="VD: 30A-12345" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Loại xe <span class="text-danger">*</span></label>
-                            <select class="form-select" required>
+                            <select asp-for="Input.VehicleType" class="form-select" asp-items="Html.GetEnumSelectList<Co_owner_Vehicle.Models.VehicleType>()" required>
                                 <option value="">-- Chọn loại xe --</option>
-                                <option value="1">Xe điện</option>
-                                <option value="2">Hybrid</option>
-                                <option value="3">Xăng</option>
-                                <option value="4">Xe máy</option>
-                                <option value="5">Xe đạp điện</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Năm sản xuất</label>
-                            <input type="number" class="form-control" placeholder="2023" min="1900" max="@DateTime.Now.Year">
+                            <input asp-for="Input.Year" type="number" class="form-control" placeholder="2023" min="1900" max="@DateTime.Now.Year">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Màu sắc</label>
-                            <input type="text" class="form-control" placeholder="VD: Đen, Trắng, Xanh...">
+                            <input asp-for="Input.Color" type="text" class="form-control" placeholder="VD: Đen, Trắng, Xanh...">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số VIN</label>
-                            <input type="text" class="form-control" placeholder="Số khung (17 ký tự)" maxlength="17">
-                            <small class="text-muted">Vehicle Identification Number</small>
-                        </div>
+                        
                         <div class="col-md-6">
                             <label class="form-label">Số máy</label>
-                            <input type="text" class="form-control" placeholder="Số máy">
+                            <input asp-for="Input.EngineNumber" type="text" class="form-control" placeholder="Số máy">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Giá mua</label>
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="500000000">
+                                <input asp-for="Input.PurchasePrice" type="number" class="form-control" placeholder="500000000">
                                 <span class="input-group-text">đ</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Ngày mua</label>
-                            <input type="date" class="form-control">
+                            <input asp-for="Input.PurchaseDate" type="date" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Số km hiện tại</label>
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="15000">
+                                <input asp-for="Input.CurrentMileage" type="number" class="form-control" placeholder="15000">
                                 <span class="input-group-text">km</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
-                            <select class="form-select" required>
-                                <option value="1" selected>Hoạt động</option>
-                                <option value="2">Bảo dưỡng</option>
-                                <option value="3">Sửa chữa</option>
-                                <option value="4">Không hoạt động</option>
+                            <select asp-for="Input.Status" class="form-select" asp-items="Html.GetEnumSelectList<Co_owner_Vehicle.Models.VehicleStatus>()" required>
                             </select>
                         </div>
                         <div class="col-12">
@@ -106,7 +94,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label">Mô tả</label>
-                            <textarea class="form-control" rows="4" placeholder="Thông tin chi tiết về xe, tình trạng, đặc điểm..."></textarea>
+                            <textarea asp-for="Input.Description" class="form-control" rows="4" placeholder="Thông tin chi tiết về xe, tình trạng, đặc điểm..."></textarea>
                         </div>
                     </div>
                     <hr class="my-4">

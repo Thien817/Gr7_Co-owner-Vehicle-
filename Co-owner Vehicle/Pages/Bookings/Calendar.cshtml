@@ -16,9 +16,9 @@
         <button class="btn btn-outline-secondary me-2">
             <i class="bi bi-list-ul me-2"></i>Xem dạng list
         </button>
-        <a asp-page="/Bookings/Create" class="btn btn-primary">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBookingModal">
             <i class="bi bi-plus-lg me-2"></i>Đặt lịch mới
-        </a>
+        </button>
     </div>
 </div>
 
@@ -274,49 +274,49 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form method="post" asp-page-handler="Create">
                     <div class="row g-3">
                         <div class="col-12">
                             <label class="form-label">Chọn xe <span class="text-danger">*</span></label>
-                            <select class="form-select" required>
+                            <select asp-for="SelectedVehicleId" class="form-select" required>
                                 <option value="">-- Chọn xe --</option>
-                                <option>Tesla Model 3 - 30A-12345</option>
-                                <option>Toyota Prius - 30B-67890</option>
-                                <option>Honda Civic - 30C-11111</option>
-                                <option>VinFast VF8 - 30D-22222</option>
+                                @foreach (var v in Model.Vehicles)
+                                {
+                                    <option value="@v.VehicleId">@v.Brand @v.Model - @v.LicensePlate</option>
+                                }
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Ngày bắt đầu <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" required>
+                            <input asp-for="StartDate" type="date" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Giờ bắt đầu <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" required>
+                            <input asp-for="StartTimeOfDay" type="time" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Ngày kết thúc <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" required>
+                            <input asp-for="EndDate" type="date" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Giờ kết thúc <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" required>
+                            <input asp-for="EndTimeOfDay" type="time" class="form-control" required>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Mục đích sử dụng <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" placeholder="VD: Đi công tác, Đi du lịch..." required>
+                            <input asp-for="Purpose" type="text" class="form-control" placeholder="VD: Đi công tác, Đi du lịch..." required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Điểm đón</label>
-                            <input type="text" class="form-control" placeholder="Địa chỉ đón xe">
+                            <input asp-for="PickupLocation" type="text" class="form-control" placeholder="Địa chỉ đón xe">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Điểm trả</label>
-                            <input type="text" class="form-control" placeholder="Địa chỉ trả xe">
+                            <input asp-for="ReturnLocation" type="text" class="form-control" placeholder="Địa chỉ trả xe">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Ghi chú</label>
-                            <textarea class="form-control" rows="3" placeholder="Thông tin thêm..."></textarea>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Thông tin thêm..."></textarea>
                         </div>
                     </div>
                 </form>

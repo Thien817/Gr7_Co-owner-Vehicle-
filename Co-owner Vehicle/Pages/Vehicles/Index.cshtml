@@ -230,51 +230,50 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="addVehicleForm" method="post" asp-page="/Vehicles/Create">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Hãng xe</label>
-                            <input type="text" class="form-control" placeholder="VD: Tesla, Toyota...">
+                            <input name="Input.Brand" type="text" class="form-control" placeholder="VD: Tesla, Toyota..." required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Model</label>
-                            <input type="text" class="form-control" placeholder="VD: Model 3, Camry...">
+                            <input name="Input.Model" type="text" class="form-control" placeholder="VD: Model 3, Camry..." required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Biển số xe</label>
-                            <input type="text" class="form-control" placeholder="VD: 30A-12345">
+                            <input name="Input.LicensePlate" type="text" class="form-control" placeholder="VD: 30A-12345" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Loại xe</label>
-                            <select class="form-select">
-                                <option>Xe điện</option>
-                                <option>Hybrid</option>
-                                <option>Xăng</option>
-                                <option>Dầu</option>
+                            <select name="Input.VehicleType" class="form-select" required>
+                                <option value="">-- Chọn loại xe --</option>
+                                <option value="ElectricCar">Xe điện</option>
+                                <option value="HybridCar">Hybrid</option>
+                                <option value="GasolineCar">Xăng</option>
+                                <option value="Motorcycle">Xe máy</option>
+                                <option value="Bicycle">Xe đạp</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Năm sản xuất</label>
-                            <input type="number" class="form-control" placeholder="2023">
+                            <input name="Input.Year" type="number" class="form-control" placeholder="2023">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Màu sắc</label>
-                            <input type="text" class="form-control" placeholder="VD: Đen, Trắng...">
+                            <input name="Input.Color" type="text" class="form-control" placeholder="VD: Đen, Trắng...">
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Số VIN</label>
-                            <input type="text" class="form-control" placeholder="Số khung">
-                        </div>
+                        
                         <div class="col-12">
                             <label class="form-label">Mô tả</label>
-                            <textarea class="form-control" rows="3" placeholder="Thông tin chi tiết về xe..."></textarea>
+                            <textarea name="Input.Description" class="form-control" rows="3" placeholder="Thông tin chi tiết về xe..."></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary">
+                <button type="submit" form="addVehicleForm" class="btn btn-primary">
                     <i class="bi bi-check-lg me-2"></i>Thêm xe
                 </button>
             </div>
