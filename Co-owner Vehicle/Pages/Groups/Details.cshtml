@@ -1,0 +1,565 @@
+@page
+@model Co_owner_Vehicle.Pages.Groups.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết nhóm";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Groups/Index">Nhóm</a></li>
+                <li class="breadcrumb-item active">Chi tiết nhóm</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-people text-primary me-2"></i>Nhóm Tesla Model 3
+        </h2>
+        <p class="text-muted mb-0">Quản lý thành viên và sở hữu xe</p>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Thêm thành viên
+        </button>
+    </div>
+</div>
+
+<!-- Group Overview Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Thành viên</h6>
+                        <h3 class="fw-bold mb-0">4</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Tổng sở hữu</h6>
+                        <h3 class="fw-bold mb-0">100%</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="bi bi-pie-chart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Voting đang chờ</h6>
+                        <h3 class="fw-bold mb-0">2</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Chi phí tháng này</h6>
+                        <h3 class="fw-bold mb-0">2.5M</h3>
+                    </div>
+                    <div class="stat-icon bg-info">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Vehicle Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-car-front me-2"></i>Thông tin xe
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Tên xe</label>
+                        <p class="fw-bold mb-0">Tesla Model 3</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Biển số</label>
+                        <p class="fw-bold mb-0">30A-12345</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Năm sản xuất</label>
+                        <p class="mb-0">2023</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Trạng thái</label>
+                        <p class="mb-0"><span class="badge bg-success">Hoạt động</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Loại xe</label>
+                        <p class="mb-0">Xe điện</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Số km hiện tại</label>
+                        <p class="mb-0">15,350 km</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Members List -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="bi bi-person-circle me-2"></i>Thành viên nhóm
+                </h6>
+                <button class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Thêm thành viên
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Thành viên</th>
+                                <th>Tỷ lệ sở hữu</th>
+                                <th>Vai trò</th>
+                                <th>Ngày tham gia</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary text-white me-3">NV</div>
+                                        <div>
+                                            <strong>Nguyễn Văn A</strong><br>
+                                            <small class="text-muted">nguyenvana@email.com</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                            <div class="progress-bar bg-primary" style="width: 30%">30%</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-primary">Quản trị viên</span></td>
+                                <td>01/09/2024</td>
+                                <td><span class="badge bg-success">Hoạt động</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-success text-white me-3">LT</div>
+                                        <div>
+                                            <strong>Lê Thị B</strong><br>
+                                            <small class="text-muted">lethib@email.com</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                            <div class="progress-bar bg-success" style="width: 30%">30%</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-secondary">Thành viên</span></td>
+                                <td>05/09/2024</td>
+                                <td><span class="badge bg-success">Hoạt động</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-warning text-white me-3">TT</div>
+                                        <div>
+                                            <strong>Trần Văn C</strong><br>
+                                            <small class="text-muted">tranvanc@email.com</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                            <div class="progress-bar bg-warning" style="width: 25%">25%</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-secondary">Thành viên</span></td>
+                                <td>10/09/2024</td>
+                                <td><span class="badge bg-success">Hoạt động</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-info text-white me-3">PH</div>
+                                        <div>
+                                            <strong>Phạm Văn D</strong><br>
+                                            <small class="text-muted">phamvand@email.com</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                            <div class="progress-bar bg-info" style="width: 15%">15%</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-secondary">Thành viên</span></td>
+                                <td>15/09/2024</td>
+                                <td><span class="badge bg-success">Hoạt động</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ownership Shares Visualization -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-pie-chart me-2"></i>Phân bổ sở hữu
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <canvas id="ownershipChart" height="250"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item px-0 border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary text-white me-3">NV</div>
+                                        <div>
+                                            <strong>Nguyễn Văn A</strong><br>
+                                            <small class="text-muted">30% sở hữu</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-primary">30%</span>
+                                </div>
+                            </div>
+                            <div class="list-group-item px-0 border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-success text-white me-3">LT</div>
+                                        <div>
+                                            <strong>Lê Thị B</strong><br>
+                                            <small class="text-muted">30% sở hữu</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-success">30%</span>
+                                </div>
+                            </div>
+                            <div class="list-group-item px-0 border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-warning text-white me-3">TT</div>
+                                        <div>
+                                            <strong>Trần Văn C</strong><br>
+                                            <small class="text-muted">25% sở hữu</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-warning">25%</span>
+                                </div>
+                            </div>
+                            <div class="list-group-item px-0 border-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-info text-white me-3">PH</div>
+                                        <div>
+                                            <strong>Phạm Văn D</strong><br>
+                                            <small class="text-muted">15% sở hữu</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-info">15%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Voting Sessions -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="bi bi-clipboard-check me-2"></i>Voting đang chờ
+                </h6>
+                <a href="#" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Tạo voting mới
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Bình chọn thay lốp mới</h6>
+                                <p class="text-muted mb-2 small">
+                                    Đề xuất thay lốp mùa hè cho xe Tesla Model 3
+                                </p>
+                                <div class="d-flex gap-3 small">
+                                    <span class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>Kết thúc: 30/10/2024
+                                    </span>
+                                    <span class="text-muted">
+                                        <i class="bi bi-check-circle me-1"></i>3/4 đã bỏ phiếu
+                                    </span>
+                                </div>
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="bi bi-check-lg me-1"></i>Bỏ phiếu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Bình chọn đổi màu xe</h6>
+                                <p class="text-muted mb-2 small">
+                                    Đề xuất sơn lại xe từ đen sang trắng
+                                </p>
+                                <div class="d-flex gap-3 small">
+                                    <span class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>Kết thúc: 05/11/2024
+                                    </span>
+                                    <span class="text-muted">
+                                        <i class="bi bi-check-circle me-1"></i>2/4 đã bỏ phiếu
+                                    </span>
+                                </div>
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-info" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="bi bi-check-lg me-1"></i>Bỏ phiếu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="#" class="text-decoration-none">
+                        Xem tất cả voting <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-person-plus me-2"></i>Thêm thành viên
+                    </button>
+                    <button class="btn btn-outline-success">
+                        <i class="bi bi-clipboard-check me-2"></i>Tạo voting
+                    </button>
+                    <button class="btn btn-outline-info">
+                        <i class="bi bi-receipt me-2"></i>Thêm chi phí
+                    </button>
+                    <button class="btn btn-outline-warning">
+                        <i class="bi bi-calendar-event me-2"></i>Xem lịch đặt
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-file-earmark-text me-2"></i>Xuất báo cáo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Stats -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Thống kê nhóm
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Tổng chi phí tháng này</small>
+                    <h4 class="fw-bold mb-0">2,500,000 đ</h4>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Số lượt đặt xe</small>
+                    <h4 class="fw-bold mb-0">28 lượt</h4>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Tổng số km</small>
+                    <h4 class="fw-bold mb-0">2,450 km</h4>
+                </div>
+                <div>
+                    <small class="text-muted">Ngày tạo nhóm</small>
+                    <h6 class="fw-bold mb-0">01/09/2024</h6>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Fund -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-wallet2 me-2"></i>Quỹ chung
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <h3 class="fw-bold text-success mb-1">5,500,000 đ</h3>
+                    <small class="text-muted">Số dư hiện tại</small>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">
+                        <i class="bi bi-plus-lg me-2"></i>Nạp tiền
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-clock-history me-2"></i>Lịch sử giao dịch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Ownership Chart
+        const ownershipCtx = document.getElementById('ownershipChart').getContext('2d');
+        new Chart(ownershipCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Nguyễn Văn A', 'Lê Thị B', 'Trần Văn C', 'Phạm Văn D'],
+                datasets: [{
+                    data: [30, 30, 25, 15],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+

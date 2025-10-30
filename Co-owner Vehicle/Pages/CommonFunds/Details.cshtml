@@ -1,0 +1,228 @@
+@page
+@model Co_owner_Vehicle.Pages.CommonFunds.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết quỹ chung";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/CommonFunds/Index">Quỹ chung</a></li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-wallet2 text-primary me-2"></i>Chi tiết quỹ chung
+        </h2>
+        <p class="text-muted mb-0">Quản lý và theo dõi quỹ chung</p>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+        </button>
+        <button class="btn btn-success">
+            <i class="bi bi-plus-lg me-2"></i>Nạp tiền
+        </button>
+    </div>
+</div>
+
+<!-- Fund Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-wallet2 fs-1 text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="fw-bold mb-2">Quỹ bảo dưỡng</h4>
+                        <div class="d-flex gap-2 flex-wrap mb-2">
+                            <span class="badge bg-primary fs-6">Bảo dưỡng</span>
+                            <span class="badge bg-info">Nhóm Tesla Model 3</span>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Quỹ dùng cho bảo dưỡng định kỳ và sửa chữa xe
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Số dư hiện tại</label>
+                        <h3 class="fw-bold text-primary mb-0">5,500,000 đ</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Mục tiêu</label>
+                        <p class="fw-bold mb-0">10,000,000 đ</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Tiến độ</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1" style="height: 20px;">
+                                <div class="progress-bar bg-primary" style="width: 55%">55%</div>
+                            </div>
+                            <span class="fw-bold">55%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Ngày tạo</label>
+                        <p class="mb-0">01/09/2024</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6 class="mb-3">Tóm tắt</h6>
+                        <div class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted">Số dư</small>
+                            <h4 class="fw-bold mb-0">5,500,000 đ</h4>
+                        </div>
+                        <div class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted">Đã chi</small>
+                            <h6 class="fw-bold mb-0">2,500,000 đ</h6>
+                        </div>
+                        <div>
+                            <small class="text-muted">Đã nạp</small>
+                            <h6 class="fw-bold mb-0">8,000,000 đ</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Recent Transactions -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Giao dịch gần đây
+                </h6>
+                <a href="#" class="btn btn-sm btn-outline-primary">
+                    Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Loại</th>
+                                <th>Số tiền</th>
+                                <th>Mô tả</th>
+                                <th>Thành viên</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>25/10/2024</td>
+                                <td><span class="badge bg-success">Nạp tiền</span></td>
+                                <td class="text-success fw-bold">+1,000,000 đ</td>
+                                <td>Nạp tiền vào quỹ</td>
+                                <td>Nguyễn Văn A</td>
+                            </tr>
+                            <tr>
+                                <td>20/10/2024</td>
+                                <td><span class="badge bg-danger">Chi phí</span></td>
+                                <td class="text-danger fw-bold">-500,000 đ</td>
+                                <td>Bảo dưỡng định kỳ</td>
+                                <td>Hệ thống</td>
+                            </tr>
+                            <tr>
+                                <td>15/10/2024</td>
+                                <td><span class="badge bg-success">Nạp tiền</span></td>
+                                <td class="text-success fw-bold">+2,000,000 đ</td>
+                                <td>Nạp tiền vào quỹ</td>
+                                <td>Lê Thị B</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fund Description -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Mô tả quỹ
+                </h6>
+            </div>
+            <div class="card-body">
+                <p>
+                    Quỹ bảo dưỡng được thành lập để chi trả cho các khoản chi phí bảo dưỡng định kỳ và 
+                    sửa chữa xe. Quỹ được đóng góp bởi tất cả thành viên trong nhóm theo tỷ lệ sở hữu.
+                </p>
+                <div class="mt-3">
+                    <h6 class="mb-2">Quy tắc sử dụng:</h6>
+                    <ul>
+                        <li>Chi phí bảo dưỡng định kỳ sẽ được thanh toán từ quỹ này</li>
+                        <li>Sửa chữa khẩn cấp cần được voting bởi nhóm</li>
+                        <li>Mỗi thành viên có thể nạp tiền vào quỹ bất cứ lúc nào</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">
+                        <i class="bi bi-plus-lg me-2"></i>Nạp tiền
+                    </button>
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="bi bi-clock-history me-2"></i>Lịch sử giao dịch
+                    </a>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fund Stats -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Thống kê
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Tổng đã nạp</small>
+                    <h5 class="fw-bold mb-0">8,000,000 đ</h5>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Tổng đã chi</small>
+                    <h5 class="fw-bold mb-0">2,500,000 đ</h5>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Số giao dịch</small>
+                    <h5 class="fw-bold mb-0">15</h5>
+                </div>
+                <div>
+                    <small class="text-muted">Thành viên đóng góp</small>
+                    <h5 class="fw-bold mb-0">4 người</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

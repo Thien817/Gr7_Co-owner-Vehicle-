@@ -1,0 +1,407 @@
+@page
+@model Co_owner_Vehicle.Pages.Bookings.CalendarModel
+@{
+    ViewData["Title"] = "Lịch đặt xe";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-calendar-check text-primary me-2"></i>Lịch đặt xe
+        </h2>
+        <p class="text-muted mb-0">Xem và quản lý lịch đặt xe của bạn</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-secondary me-2">
+            <i class="bi bi-list-ul me-2"></i>Xem dạng list
+        </button>
+        <a asp-page="/Bookings/Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Đặt lịch mới
+        </a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small">Chọn xe</label>
+                    <select class="form-select" name="vehicleId" asp-for="VehicleId">
+                        <option value="">Tất cả xe</option>
+                        @foreach (var vehicle in Model.Vehicles)
+                        {
+                            <option value="@vehicle.VehicleId">@vehicle.Brand @vehicle.Model - @vehicle.LicensePlate</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">Trạng thái</label>
+                    <select class="form-select" name="statusFilter" asp-for="StatusFilter">
+                        <option value="">Tất cả</option>
+                        <option value="Pending">Chờ duyệt</option>
+                        <option value="Confirmed">Đã duyệt</option>
+                        <option value="Completed">Hoàn thành</option>
+                        <option value="Cancelled">Đã hủy</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">Người đặt</label>
+                    <select class="form-select" name="myBookingsOnly" asp-for="MyBookingsOnly">
+                        <option value="false">Tất cả</option>
+                        <option value="true">Chỉ lịch của tôi</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search me-2"></i>Lọc
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Calendar View -->
+<div class="row g-4">
+    <!-- Calendar -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">@Model.Month/@Model.Year</h5>
+                <div class="btn-group">
+                    <a asp-page="/Bookings/Calendar" asp-route-year="@(Model.Month == 1 ? Model.Year - 1 : Model.Year)" asp-route-month="@(Model.Month == 1 ? 12 : Model.Month - 1)" asp-route-vehicleId="@Model.VehicleId" asp-route-statusFilter="@Model.StatusFilter" asp-route-myBookingsOnly="@Model.MyBookingsOnly" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    <a asp-page="/Bookings/Calendar" asp-route-year="@DateTime.UtcNow.Year" asp-route-month="@DateTime.UtcNow.Month" asp-route-vehicleId="@Model.VehicleId" asp-route-statusFilter="@Model.StatusFilter" asp-route-myBookingsOnly="@Model.MyBookingsOnly" class="btn btn-sm btn-outline-secondary">Hôm nay</a>
+                    <a asp-page="/Bookings/Calendar" asp-route-year="@(Model.Month == 12 ? Model.Year + 1 : Model.Year)" asp-route-month="@(Model.Month == 12 ? 1 : Model.Month + 1)" asp-route-vehicleId="@Model.VehicleId" asp-route-statusFilter="@Model.StatusFilter" asp-route-myBookingsOnly="@Model.MyBookingsOnly" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <!-- Calendar Grid -->
+                <div class="calendar-wrapper">
+                    <div class="calendar-header">
+                        <div class="calendar-day-header">CN</div>
+                        <div class="calendar-day-header">T2</div>
+                        <div class="calendar-day-header">T3</div>
+                        <div class="calendar-day-header">T4</div>
+                        <div class="calendar-day-header">T5</div>
+                        <div class="calendar-day-header">T6</div>
+                        <div class="calendar-day-header">T7</div>
+                    </div>
+                    <div class="calendar-body">
+                        @{
+                            var monthStart = new DateTime(Model.Year, Model.Month, 1);
+                            var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+                            var firstDayOfWeek = (int)monthStart.DayOfWeek;
+                            var today = DateTime.UtcNow.Date;
+                            
+                            // Previous month days
+                            var prevMonth = monthStart.AddDays(-1);
+                            var prevMonthDays = Enumerable.Range(1, firstDayOfWeek)
+                                .Select(i => prevMonth.AddDays(-firstDayOfWeek + i).Day)
+                                .ToList();
+                            
+                            // Current month days
+                            var currentMonthDays = Enumerable.Range(1, monthEnd.Day).ToList();
+                            
+                            // Next month days to fill the grid
+                            var totalCells = 42; // 6 weeks * 7 days
+                            var usedCells = firstDayOfWeek + monthEnd.Day;
+                            var nextMonthDays = Enumerable.Range(1, totalCells - usedCells).ToList();
+                        }
+                        
+                        @foreach (var day in prevMonthDays)
+                        {
+                            <div class="calendar-day other-month">@day</div>
+                        }
+                        
+                        @foreach (var day in currentMonthDays)
+                        {
+                            var currentDate = new DateTime(Model.Year, Model.Month, day);
+                            var dayEvents = Model.CalendarEvents.Where(e => e.Date == currentDate).ToList();
+                            var isToday = currentDate == today;
+                            var hasEvents = dayEvents.Any();
+                            
+                            <div class="calendar-day @(isToday ? "today" : "") @(hasEvents ? "has-events" : "")" data-date="@currentDate.ToString("yyyy-MM-dd")">
+                                @day
+                                @if (hasEvents)
+                                {
+                                    @foreach (var evt in dayEvents.Take(3))
+                                    {
+                                        <div class="event-indicator @evt.Color" title="@evt.Title"></div>
+                                    }
+                                    @if (dayEvents.Count > 3)
+                                    {
+                                        <div class="event-indicator bg-secondary" title="+@(dayEvents.Count - 3) lịch khác"></div>
+                                    }
+                                }
+                            </div>
+                        }
+                        
+                        @foreach (var day in nextMonthDays)
+                        {
+                            <div class="calendar-day other-month">@day</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar - Events List -->
+    <div class="col-lg-4">
+        <!-- Today's Events -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-calendar-day me-2"></i>Lịch hôm nay (@DateTime.UtcNow.ToString("dd/MM"))
+            </div>
+            <div class="card-body">
+                @if (Model.TodayBookings.Any())
+                {
+                    @foreach (var booking in Model.TodayBookings)
+                    {
+                        var statusBadge = booking.Status switch
+                        {
+                            BookingStatus.Pending => ("bg-warning", "Chờ duyệt"),
+                            BookingStatus.Confirmed => ("bg-primary", "Đã duyệt"),
+                            BookingStatus.Completed => ("bg-success", "Hoàn thành"),
+                            BookingStatus.Cancelled => ("bg-danger", "Đã hủy"),
+                            _ => ("bg-secondary", booking.Status.ToString())
+                        };
+                        
+                        <div class="booking-item mb-3 @(booking != Model.TodayBookings.Last() ? "pb-3 border-bottom" : "")">
+                            <div class="d-flex gap-3">
+                                <div class="time-badge @statusBadge.Item1 text-white">
+                                    <div class="small">@booking.StartTime.ToString("HH:mm")</div>
+                                    <div class="small">@booking.EndTime.ToString("HH:mm")</div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">@booking.Vehicle?.Brand @booking.Vehicle?.Model</h6>
+                                    <p class="mb-1 small text-muted">
+                                        <i class="bi bi-person me-1"></i>@booking.User?.FullName
+                                    </p>
+                                    <p class="mb-2 small">@booking.Purpose</p>
+                                    <span class="badge @statusBadge.Item1">@statusBadge.Item2</span>
+                                    <a asp-page="/Bookings/Details" asp-route-id="@booking.BookingScheduleId" class="btn btn-sm btn-link p-0 ms-2">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info mb-0 small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Không có lịch nào hôm nay
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-calendar-event me-2"></i>Lịch sắp tới
+            </div>
+            <div class="card-body">
+                @if (Model.UpcomingBookings.Any())
+                {
+                    @foreach (var booking in Model.UpcomingBookings)
+                    {
+                        var statusBadge = booking.Status switch
+                        {
+                            BookingStatus.Pending => ("bg-warning", "Chờ duyệt"),
+                            BookingStatus.Confirmed => ("bg-primary", "Đã duyệt"),
+                            BookingStatus.Completed => ("bg-success", "Hoàn thành"),
+                            BookingStatus.Cancelled => ("bg-danger", "Đã hủy"),
+                            _ => ("bg-secondary", booking.Status.ToString())
+                        };
+                        var badgeColor = statusBadge.Item1;
+                        
+                        <div class="booking-item @(booking != Model.UpcomingBookings.Last() ? "mb-3 pb-3 border-bottom" : "")">
+                            <div class="d-flex gap-3">
+                                <div class="time-badge @badgeColor text-white">
+                                    <div class="small">@booking.StartTime.ToString("HH:mm")</div>
+                                    <div class="small">@booking.EndTime.ToString("HH:mm")</div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <h6 class="mb-0">@booking.Vehicle?.Brand @booking.Vehicle?.Model</h6>
+                                        <small class="text-muted">@booking.StartTime.ToString("dd/MM")</small>
+                                    </div>
+                                    <p class="mb-1 small text-muted">
+                                        <i class="bi bi-person me-1"></i>@booking.User?.FullName
+                                    </p>
+                                    <p class="mb-2 small">@booking.Purpose</p>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge @badgeColor">@statusBadge.Item2</span>
+                                        <a asp-page="/Bookings/Details" asp-route-id="@booking.BookingScheduleId" class="btn btn-sm btn-link p-0">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info mb-0 small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Không có lịch sắp tới
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Booking Modal -->
+<div class="modal fade" id="createBookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-calendar-plus text-primary me-2"></i>Đặt lịch mới
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Chọn xe <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn xe --</option>
+                                <option>Tesla Model 3 - 30A-12345</option>
+                                <option>Toyota Prius - 30B-67890</option>
+                                <option>Honda Civic - 30C-11111</option>
+                                <option>VinFast VF8 - 30D-22222</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày bắt đầu <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giờ bắt đầu <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày kết thúc <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giờ kết thúc <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mục đích sử dụng <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="VD: Đi công tác, Đi du lịch..." required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Điểm đón</label>
+                            <input type="text" class="form-control" placeholder="Địa chỉ đón xe">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Điểm trả</label>
+                            <input type="text" class="form-control" placeholder="Địa chỉ trả xe">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" rows="3" placeholder="Thông tin thêm..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-2"></i>Đặt lịch
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Calendar Styles */
+    .calendar-wrapper {
+        font-size: 0.875rem;
+    }
+    
+    .calendar-header {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background: var(--gray-100);
+        border-bottom: 2px solid var(--gray-200);
+    }
+    
+    .calendar-day-header {
+        padding: 1rem;
+        text-align: center;
+        font-weight: 600;
+        color: var(--gray-600);
+    }
+    
+    .calendar-body {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+    
+    .calendar-day {
+        min-height: 100px;
+        padding: 0.75rem;
+        border-right: 1px solid var(--gray-200);
+        border-bottom: 1px solid var(--gray-200);
+        position: relative;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    
+    .calendar-day:hover {
+        background: var(--gray-50);
+    }
+    
+    .calendar-day.today {
+        background: rgba(79, 70, 229, 0.1);
+        font-weight: 700;
+        color: var(--primary);
+    }
+    
+    .calendar-day.other-month {
+        color: var(--gray-400);
+        background: var(--gray-50);
+    }
+    
+    .calendar-day.has-events {
+        background: rgba(16, 185, 129, 0.05);
+    }
+    
+    .event-indicator {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    /* Booking Item */
+    .booking-item .time-badge {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        min-width: 60px;
+        height: fit-content;
+    }
+</style>
+

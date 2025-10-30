@@ -1,0 +1,290 @@
+@page
+@model Co_owner_Vehicle.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Co-owner Vehicle</title>
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 0 1rem;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .login-header i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-body {
+            padding: 2.5rem 2rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--gray-200);
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        
+        .input-group-text {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-right: none;
+            color: var(--gray-600);
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+        }
+        
+        .input-group:focus-within .input-group-text {
+            border-color: #4F46E5;
+        }
+        
+        .btn-login {
+            padding: 0.875rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--gray-300);
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .demo-accounts {
+            background: var(--gray-50);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .demo-accounts h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--gray-800);
+        }
+        
+        .demo-account-item {
+            font-size: 0.8125rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 0.375rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .demo-account-item strong {
+            color: var(--primary);
+        }
+        
+        .btn-demo {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <i class="bi bi-car-front-fill"></i>
+                <h2 class="fw-bold mb-2">Co-owner Vehicle</h2>
+                <p class="mb-0 opacity-75">Đăng nhập vào hệ thống</p>
+            </div>
+            
+            <!-- Body -->
+            <div class="login-body">
+                <form method="post">
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+                    
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input asp-for="Email" class="form-control" placeholder="admin@coowner.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
+                            <label asp-for="RememberMe" class="form-check-label">
+                                Ghi nhớ đăng nhập
+                            </label>
+                        </div>
+                        <a href="#" class="text-primary text-decoration-none small">Quên mật khẩu?</a>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-login w-100">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                    </button>
+                </form>
+                
+                <!-- Divider -->
+                <div class="divider">
+                    <span>HOẶC</span>
+                </div>
+                
+                <!-- Register Link -->
+                <div class="text-center">
+                    <p class="mb-0">
+                        Chưa có tài khoản? 
+                        <a asp-page="/Account/Register" class="text-primary fw-semibold text-decoration-none">Đăng ký ngay</a>
+                    </p>
+                </div>
+                
+                <!-- Demo Accounts -->
+                <div class="demo-accounts">
+                    <h6><i class="bi bi-info-circle me-2"></i>Tài khoản demo</h6>
+                    
+                    <div class="demo-account-item">
+                        <div>
+                            <strong>Admin:</strong> admin@coowner.com
+                            <span class="text-muted">/ admin123</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-demo" onclick="fillDemo('admin@coowner.com', 'admin123')">
+                            Dùng thử
+                        </button>
+                    </div>
+                    
+                    <div class="demo-account-item">
+                        <div>
+                            <strong>Staff:</strong> staff@coowner.com
+                            <span class="text-muted">/ staff123</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-success btn-demo" onclick="fillDemo('staff@coowner.com', 'staff123')">
+                            Dùng thử
+                        </button>
+                    </div>
+                    
+                    <div class="demo-account-item">
+                        <div>
+                            <strong>User:</strong> nguyenvana@email.com
+                            <span class="text-muted">/ user123</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-info btn-demo" onclick="fillDemo('nguyenvana@email.com', 'user123')">
+                            Dùng thử
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Back to Home -->
+                <div class="text-center mt-4">
+                    <a asp-page="/Index" class="text-muted text-decoration-none small">
+                        <i class="bi bi-arrow-left me-1"></i>Về trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        function fillDemo(email, password) {
+            document.getElementById('Email').value = email;
+            document.getElementById('Password').value = password;
+        }
+    </script>
+</body>
+</html>
+

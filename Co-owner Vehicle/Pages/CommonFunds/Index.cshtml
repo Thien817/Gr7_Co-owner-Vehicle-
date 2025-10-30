@@ -1,0 +1,171 @@
+@page
+@model Co_owner_Vehicle.Pages.CommonFunds.IndexModel
+@{
+    ViewData["Title"] = "Quỹ chung";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-wallet2 text-primary me-2"></i>Quỹ chung
+        </h2>
+        <p class="text-muted mb-0">Quản lý quỹ chung của các nhóm</p>
+    </div>
+    <button class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Tạo quỹ mới
+    </button>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Tổng số dư</h6>
+                        <h3 class="fw-bold mb-0">@Model.Statistics.TotalBalance.ToString("N0") đ</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Số quỹ</h6>
+                        <h3 class="fw-bold mb-0">@Model.Statistics.TotalFunds</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="bi bi-stack"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Tổng giao dịch</h6>
+                        <h3 class="fw-bold mb-0">@Model.Statistics.TotalTransactions</h3>
+                    </div>
+                    <div class="stat-icon bg-info">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Funds List -->
+@if (Model.Funds.Any())
+{
+    <div class="row g-4">
+        @foreach (var fund in Model.Funds)
+        {
+            var fundTypeClass = fund.FundType switch
+            {
+                FundType.Maintenance => "primary",
+                FundType.Emergency => "warning",
+                FundType.Insurance => "info",
+                FundType.Upgrade => "success",
+                _ => "secondary"
+            };
+
+            var fundTypeName = fund.FundType switch
+            {
+                FundType.Maintenance => "Bảo dưỡng",
+                FundType.Emergency => "Dự phòng",
+                FundType.Insurance => "Bảo hiểm",
+                FundType.Upgrade => "Nâng cấp",
+                _ => "Khác"
+            };
+
+            var progressPercentage = fund.TargetAmount.HasValue && fund.TargetAmount.Value > 0
+                ? (int)((fund.CurrentBalance / fund.TargetAmount.Value) * 100)
+                : 0;
+
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-@fundTypeClass text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">@fund.FundName</h6>
+                            <span class="badge bg-light text-@fundTypeClass">@fund.GroupName</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Số dư hiện tại</small>
+                            <h3 class="fw-bold text-@fundTypeClass mb-0">@fund.CurrentBalance.ToString("N0") đ</h3>
+                        </div>
+                        @if (fund.TargetAmount.HasValue)
+                        {
+                            <div class="mb-3">
+                                <small class="text-muted">Mục tiêu</small>
+                                <p class="mb-0">@fund.TargetAmount.Value.ToString("N0") đ</p>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small class="text-muted">Tiến độ</small>
+                                    <small class="text-muted">@progressPercentage%</small>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-@fundTypeClass" style="width: @progressPercentage%"></div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <small class="text-muted">Mục tiêu</small>
+                                <p class="mb-0">Không giới hạn</p>
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <small class="text-muted">Loại quỹ</small>
+                            <p class="mb-0"><span class="badge bg-@fundTypeClass">@fundTypeName</span></p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(fund.Description))
+                        {
+                            <div class="mb-3">
+                                <small class="text-muted">Mô tả</small>
+                                <p class="mb-0">@fund.Description</p>
+                            </div>
+                        }
+                        <div class="mb-2">
+                            <small class="text-muted">Số giao dịch: @fund.TransactionCount</small>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="#" class="btn btn-@fundTypeClass">
+                                <i class="bi bi-eye me-2"></i>Xem chi tiết
+                            </a>
+                            <button class="btn btn-outline-success">
+                                <i class="bi bi-plus-lg me-2"></i>Nạp tiền
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+            <h5 class="text-muted">Chưa có quỹ chung nào</h5>
+            <p class="text-muted mb-0">Tạo quỹ mới để bắt đầu quản lý tài chính nhóm</p>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,219 @@
+@page
+@model Co_owner_Vehicle.Pages.Groups.CreateModel
+@{
+    ViewData["Title"] = "Tạo nhóm mới";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Groups/Index">Nhóm</a></li>
+                <li class="breadcrumb-item active">Tạo nhóm mới</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-plus-circle text-primary me-2"></i>Tạo nhóm đồng sở hữu mới
+        </h2>
+        <p class="text-muted mb-0">Thiết lập nhóm đồng sở hữu xe</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column - Form -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-people me-2"></i>Thông tin nhóm
+                </h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Tên nhóm <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="VD: Nhóm Tesla Model 3" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Chọn xe <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn xe --</option>
+                                <option>Tesla Model 3 - 30A-12345</option>
+                                <option>Toyota Prius - 30B-67890</option>
+                                <option>Honda Civic - 30C-11111</option>
+                                <option>VinFast VF8 - 30D-22222</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày bắt đầu <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" rows="3" placeholder="Mô tả về nhóm đồng sở hữu này..."></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h6 class="mb-3">
+                        <i class="bi bi-person-plus me-2"></i>Thêm thành viên
+                    </h6>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Nhập email thành viên">
+                            <button type="button" class="btn btn-outline-primary">
+                                <i class="bi bi-plus-lg me-1"></i>Thêm
+                            </button>
+                        </div>
+                        <small class="text-muted">Nhập email của thành viên để mời tham gia nhóm</small>
+                    </div>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Thành viên</th>
+                                    <th>Tỷ lệ sở hữu</th>
+                                    <th>Vai trò</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-xs bg-primary text-white me-2">NV</div>
+                                            <div>
+                                                <strong>Nguyễn Văn A</strong><br>
+                                                <small class="text-muted">nguyenvana@email.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input-group" style="width: 150px;">
+                                            <input type="number" class="form-control" value="30" min="0" max="100">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm">
+                                            <option selected>Quản trị viên</option>
+                                            <option>Thành viên</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger" disabled>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        <i class="bi bi-plus-circle me-2"></i>Thêm thành viên bằng cách nhập email ở trên
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Lưu ý:</strong> Tổng tỷ lệ sở hữu phải bằng 100%. Bạn có thể điều chỉnh sau khi thêm thành viên.
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="/Groups/Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Tạo nhóm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Help Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Hướng dẫn
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Chọn xe để tạo nhóm đồng sở hữu
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Thêm thành viên bằng email
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Thiết lập tỷ lệ sở hữu cho mỗi thành viên
+                    </li>
+                    <li>
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Tổng tỷ lệ sở hữu phải = 100%
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Ownership Summary -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-calculator me-2"></i>Tổng tỷ lệ sở hữu
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <h1 class="fw-bold text-primary mb-0">30%</h1>
+                    <small class="text-muted">còn thiếu 70%</small>
+                </div>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar bg-primary" style="width: 30%">30%</div>
+                </div>
+                <div class="alert alert-warning mt-3 mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Tổng tỷ lệ sở hữu phải bằng 100% để có thể tạo nhóm.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Calculate total ownership percentage
+        function updateOwnershipTotal() {
+            let total = 0;
+            document.querySelectorAll('input[type="number"][value]').forEach(input => {
+                if (input.value) {
+                    total += parseInt(input.value) || 0;
+                }
+            });
+            document.querySelector('.text-primary').textContent = total + '%';
+            document.querySelector('.text-muted').textContent = total === 100 ? 'Hoàn thành' : `còn thiếu ${100 - total}%`;
+            document.querySelector('.progress-bar').style.width = total + '%';
+            document.querySelector('.progress-bar').textContent = total + '%';
+        }
+
+        // Update on input change
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', updateOwnershipTotal);
+        });
+    </script>
+}
+

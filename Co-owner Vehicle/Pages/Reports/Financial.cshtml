@@ -1,0 +1,360 @@
+@page
+@model Co_owner_Vehicle.Pages.Reports.FinancialModel
+@{
+    ViewData["Title"] = "Báo cáo tài chính";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-graph-up text-primary me-2"></i>Báo cáo tài chính
+        </h2>
+        <p class="text-muted mb-0">Phân tích chi phí và thanh toán theo thời gian</p>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-file-earmark-pdf me-2"></i>Xuất PDF
+        </button>
+        <button class="btn btn-outline-success">
+            <i class="bi bi-file-earmark-excel me-2"></i>Xuất Excel
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-printer me-2"></i>In
+        </button>
+    </div>
+</div>
+
+<!-- Report Period Selection -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">Loại báo cáo</label>
+                <select class="form-select">
+                    <option selected>Tổng quan</option>
+                    <option>Theo xe</option>
+                    <option>Theo nhóm</option>
+                    <option>Theo người dùng</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Khoảng thời gian</label>
+                <select class="form-select">
+                    <option>Tuần này</option>
+                    <option selected>Tháng này</option>
+                    <option>Quý này</option>
+                    <option>Năm nay</option>
+                    <option>Tùy chỉnh</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Từ ngày</label>
+                <input type="date" class="form-control" value="2024-10-01">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Đến ngày</label>
+                <input type="date" class="form-control" value="2024-10-31">
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Overview -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="bi bi-arrow-up-circle"></i>
+            </div>
+            <div class="stat-card-value">12.8M</div>
+            <div class="stat-card-label">Tổng chi phí</div>
+            <div class="stat-card-change negative">
+                <i class="bi bi-arrow-down"></i> -8% so tháng trước
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="bi bi-arrow-down-circle"></i>
+            </div>
+            <div class="stat-card-value">10.4M</div>
+            <div class="stat-card-label">Đã thanh toán</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-check-circle"></i> 81% đã trả
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <div class="stat-card-value">2.4M</div>
+            <div class="stat-card-label">Công nợ</div>
+            <div class="stat-card-change">
+                <i class="bi bi-clock-history"></i> 19% chưa trả
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon primary">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="stat-card-value">3.2M</div>
+            <div class="stat-card-label">Trung bình/tháng</div>
+            <div class="stat-card-change">
+                <i class="bi bi-info-circle"></i> 6 tháng gần nhất
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Charts Column -->
+    <div class="col-lg-8">
+        <!-- Expense Trend Chart -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-graph-up-arrow me-2"></i>Xu hướng chi phí
+            </div>
+            <div class="card-body">
+                <canvas id="expenseTrendChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Expense by Category -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pie-chart me-2"></i>Chi phí theo danh mục
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="categoryPieChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="category-list">
+                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="category-dot" style="background: #4F46E5;"></div>
+                                    <span>Phí sạc điện</span>
+                                </div>
+                                <div class="text-end">
+                                    <strong class="text-primary">3.5M</strong><br>
+                                    <small class="text-muted">27.3%</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="category-dot" style="background: #10B981;"></div>
+                                    <span>Bảo dưỡng</span>
+                                </div>
+                                <div class="text-end">
+                                    <strong class="text-success">4.2M</strong><br>
+                                    <small class="text-muted">32.8%</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="category-dot" style="background: #F59E0B;"></div>
+                                    <span>Bảo hiểm</span>
+                                </div>
+                                <div class="text-end">
+                                    <strong class="text-warning">2.8M</strong><br>
+                                    <small class="text-muted">21.9%</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="category-dot" style="background: #EF4444;"></div>
+                                    <span>Khác</span>
+                                </div>
+                                <div class="text-end">
+                                    <strong class="text-danger">2.3M</strong><br>
+                                    <small class="text-muted">18.0%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="col-lg-4">
+        <!-- Top Expenses -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-star me-2"></i>Chi phí cao nhất
+            </div>
+            <div class="card-body">
+                <div class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong>Bảo hiểm xe</strong>
+                        <span class="badge bg-danger">Cao nhất</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">Honda Civic</small>
+                        <strong class="text-danger">5,000,000₫</strong>
+                    </div>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong>Bảo dưỡng định kỳ</strong>
+                        <span class="badge bg-warning">Cao</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">Tesla Model 3</small>
+                        <strong class="text-warning">2,000,000₫</strong>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <strong>Phí sạc điện</strong>
+                        <span class="badge bg-info">Trung bình</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">VinFast VF8</small>
+                        <strong class="text-info">500,000₫</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expense by Vehicle -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-car-front me-2"></i>Chi phí theo xe
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tesla Model 3</span>
+                        <strong class="text-primary">4.5M</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" style="width: 35%"></div>
+                    </div>
+                    <small class="text-muted">35% tổng chi phí</small>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>VinFast VF8</span>
+                        <strong class="text-success">3.8M</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: 30%"></div>
+                    </div>
+                    <small class="text-muted">30% tổng chi phí</small>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Honda Civic</span>
+                        <strong class="text-warning">2.5M</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: 20%"></div>
+                    </div>
+                    <small class="text-muted">20% tổng chi phí</small>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Toyota Prius</span>
+                        <strong class="text-info">2.0M</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: 15%"></div>
+                    </div>
+                    <small class="text-muted">15% tổng chi phí</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Expense Trend Chart
+        const trendCtx = document.getElementById('expenseTrendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10'],
+                datasets: [{
+                    label: 'Chi phí',
+                    data: [3200000, 4100000, 3800000, 4500000, 3900000, 4200000],
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Thanh toán',
+                    data: [3200000, 3900000, 3800000, 4200000, 3500000, 3800000],
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + '₫';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Category Pie Chart
+        const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Phí sạc điện', 'Bảo dưỡng', 'Bảo hiểm', 'Khác'],
+                datasets: [{
+                    data: [3500000, 4200000, 2800000, 2300000],
+                    backgroundColor: [
+                        '#4F46E5',
+                        '#10B981',
+                        '#F59E0B',
+                        '#EF4444'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    </script>
+}
+

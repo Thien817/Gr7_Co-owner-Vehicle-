@@ -1,0 +1,297 @@
+@page
+@model Co_owner_Vehicle.Pages.Services.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết dịch vụ";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Services/Index">Dịch vụ</a></li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-tools text-primary me-2"></i>Chi tiết dịch vụ
+        </h2>
+        <p class="text-muted mb-0">Thông tin chi tiết dịch vụ và bảo dưỡng</p>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-printer me-2"></i>In
+        </button>
+    </div>
+</div>
+
+<!-- Service Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-tools fs-1 text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="fw-bold mb-2">Bảo dưỡng định kỳ 15,000km</h4>
+                        <div class="d-flex gap-2 flex-wrap mb-2">
+                            <span class="badge bg-primary fs-6">Bảo dưỡng định kỳ</span>
+                            <span class="badge bg-success">Đã hoàn thành</span>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Thay dầu, lọc gió, kiểm tra tổng thể xe
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Xe</label>
+                        <p class="mb-0">Tesla Model 3 - 30A-12345</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Nhóm</label>
+                        <p class="mb-0">Nhóm Tesla Model 3</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Ngày thực hiện</label>
+                        <p class="fw-bold mb-0">20/10/2024</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Số km</label>
+                        <p class="fw-bold mb-0">15,000 km</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Địa điểm</label>
+                        <p class="mb-0">Xưởng dịch vụ Tesla</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Nhà cung cấp</label>
+                        <p class="mb-0">Tesla Service Center</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="mb-3">Tóm tắt</h6>
+                        <div class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted">Chi phí</small>
+                            <h4 class="fw-bold text-primary mb-0">2,000,000 đ</h4>
+                        </div>
+                        <div class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted">Trạng thái</small>
+                            <p class="mb-0"><span class="badge bg-success fs-6">Hoàn thành</span></p>
+                        </div>
+                        <div>
+                            <small class="text-muted">Ngày hoàn thành</small>
+                            <p class="mb-0">20/10/2024</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Service Details -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Chi tiết dịch vụ
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6 class="mb-3">Công việc đã thực hiện:</h6>
+                    <ul>
+                        <li>Thay dầu động cơ</li>
+                        <li>Thay lọc gió</li>
+                        <li>Kiểm tra hệ thống phanh</li>
+                        <li>Kiểm tra hệ thống điện</li>
+                        <li>Kiểm tra áp suất lốp</li>
+                        <li>Vệ sinh nội ngoại thất</li>
+                    </ul>
+                </div>
+                <div class="mb-4">
+                    <h6 class="mb-3">Phụ tùng đã thay:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Tên phụ tùng</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dầu động cơ</td>
+                                    <td>5 lít</td>
+                                    <td>200,000 đ</td>
+                                    <td>1,000,000 đ</td>
+                                </tr>
+                                <tr>
+                                    <td>Lọc gió</td>
+                                    <td>1 cái</td>
+                                    <td>300,000 đ</td>
+                                    <td>300,000 đ</td>
+                                </tr>
+                                <tr>
+                                    <td>Phụ tùng khác</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>700,000 đ</td>
+                                </tr>
+                                <tr class="table-light">
+                                    <th colspan="3">Tổng cộng</th>
+                                    <th>2,000,000 đ</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <h6 class="mb-3">Ghi chú:</h6>
+                    <p class="mb-0">
+                        Xe trong tình trạng tốt sau khi bảo dưỡng. Không phát hiện vấn đề nào. 
+                        Khuyến nghị bảo dưỡng tiếp theo tại 18,000 km.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attachments -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-paperclip me-2"></i>File đính kèm
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-danger bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-file-earmark-pdf text-danger fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Hóa đơn bảo dưỡng.pdf</h6>
+                                    <small class="text-muted">2.3 MB • 20/10/2024</small>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" title="Tải về">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-image text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Ảnh trước bảo dưỡng.jpg</h6>
+                                    <small class="text-muted">1.5 MB • 20/10/2024</small>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" title="Tải về">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Related Expense -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Chi phí liên quan
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <strong>Bảo dưỡng định kỳ 15,000km</strong>
+                </div>
+                <div class="small text-muted mb-2">
+                    Chi phí: 2,000,000 đ
+                </div>
+                <div class="mb-2">
+                    <span class="badge bg-success">Đã thanh toán</span>
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="bi bi-eye me-1"></i>Xem chi phí
+                </a>
+            </div>
+        </div>
+
+        <!-- Next Service -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-calendar3 me-2"></i>Dịch vụ tiếp theo
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <strong>Bảo dưỡng định kỳ 18,000km</strong>
+                </div>
+                <div class="small text-muted mb-2">
+                    Dự kiến: 15/11/2024
+                </div>
+                <div class="mb-2">
+                    <span class="badge bg-warning">Sắp đến hạn</span>
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="bi bi-eye me-1"></i>Xem chi tiết
+                </a>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Thao tác
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-printer me-2"></i>In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

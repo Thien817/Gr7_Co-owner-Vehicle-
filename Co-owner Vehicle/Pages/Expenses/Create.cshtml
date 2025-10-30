@@ -1,0 +1,197 @@
+@page
+@model Co_owner_Vehicle.Pages.Expenses.CreateModel
+@{
+    ViewData["Title"] = "Thêm chi phí";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Expenses/Index">Chi phí</a></li>
+                <li class="breadcrumb-item active">Thêm chi phí</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-plus-circle text-primary me-2"></i>Thêm chi phí mới
+        </h2>
+        <p class="text-muted mb-0">Ghi nhận chi phí vận hành xe</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column - Form -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Thông tin chi phí
+                </h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Chọn xe <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn xe --</option>
+                                <option>Tesla Model 3 - 30A-12345</option>
+                                <option>Toyota Prius - 30B-67890</option>
+                                <option>Honda Civic - 30C-11111</option>
+                                <option>VinFast VF8 - 30D-22222</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Chọn nhóm <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn nhóm --</option>
+                                <option>Nhóm Tesla Model 3</option>
+                                <option>Nhóm Toyota Prius</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Danh mục chi phí <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option>Phí sạc điện</option>
+                                <option>Bảo dưỡng định kỳ</option>
+                                <option>Bảo hiểm xe</option>
+                                <option>Đăng kiểm</option>
+                                <option>Vệ sinh xe</option>
+                                <option>Sửa chữa</option>
+                                <option>Nhiên liệu</option>
+                                <option>Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà cung cấp</label>
+                            <input type="text" class="form-control" placeholder="Tên nhà cung cấp">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Tiêu đề chi phí <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="VD: Phí sạc điện tháng 10/2024" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số tiền <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" placeholder="500000" required>
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày chi <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phương thức chia <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="1">Theo tỷ lệ sở hữu</option>
+                                <option value="2">Theo mức độ sử dụng</option>
+                                <option value="3">Chia đều</option>
+                                <option value="4">Tùy chỉnh</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select">
+                                <option value="1" selected>Chờ duyệt</option>
+                                <option value="2">Đã duyệt</option>
+                                <option value="3">Từ chối</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" rows="4" placeholder="Mô tả chi tiết về chi phí này..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Hóa đơn / Biên lai</label>
+                            <input type="file" class="form-control" accept="image/*,.pdf" multiple>
+                            <small class="text-muted">Hỗ trợ: JPG, PNG, PDF (Max 5MB mỗi file)</small>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="/Expenses/Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Thêm chi phí
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Help Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Hướng dẫn
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Chọn đúng xe và nhóm
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Điền đầy đủ thông tin bắt buộc
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Upload hóa đơn/biên lai để minh chứng
+                    </li>
+                    <li>
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        Chi phí sẽ được chia theo phương thức đã chọn
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Split Preview -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-calculator me-2"></i>Xem trước phân bổ
+                </h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-3">Nhập số tiền để xem phân bổ tự động</p>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between">
+                            <span>Nguyễn Văn A (30%)</span>
+                            <strong class="text-primary">-</strong>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between">
+                            <span>Lê Thị B (30%)</span>
+                            <strong class="text-primary">-</strong>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between">
+                            <span>Trần Văn C (25%)</span>
+                            <strong class="text-primary">-</strong>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between">
+                            <span>Phạm Văn D (15%)</span>
+                            <strong class="text-primary">-</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

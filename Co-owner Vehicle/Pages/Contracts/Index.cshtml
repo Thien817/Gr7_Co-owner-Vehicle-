@@ -1,0 +1,229 @@
+@page
+@model Co_owner_Vehicle.Pages.Contracts.IndexModel
+@{
+    ViewData["Title"] = "Hợp đồng điện tử";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-file-earmark-text text-primary me-2"></i>Hợp đồng điện tử
+        </h2>
+        <p class="text-muted mb-0">Quản lý hợp đồng đồng sở hữu xe</p>
+    </div>
+    <button class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Tạo hợp đồng mới
+    </button>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Tổng hợp đồng</h6>
+                        <h3 class="fw-bold mb-0">12</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Đã ký</h6>
+                        <h3 class="fw-bold mb-0">10</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Chờ ký</h6>
+                        <h3 class="fw-bold mb-0">2</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Hết hạn</h6>
+                        <h3 class="fw-bold mb-0">0</h3>
+                    </div>
+                    <div class="stat-icon bg-danger">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">Trạng thái</label>
+                <select class="form-select">
+                    <option value="">Tất cả</option>
+                    <option>Đã ký</option>
+                    <option selected>Chờ ký</option>
+                    <option>Hết hạn</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Nhóm</label>
+                <select class="form-select">
+                    <option value="">Tất cả nhóm</option>
+                    <option>Nhóm Tesla Model 3</option>
+                    <option>Nhóm Toyota Prius</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Từ ngày</label>
+                <input type="date" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Đến ngày</label>
+                <input type="date" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i>Lọc
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contracts List -->
+<div class="row g-4">
+    <!-- Contract 1 -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Hợp đồng đồng sở hữu Tesla Model 3</h6>
+                    <span class="badge bg-success">Đã ký</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted">Mã hợp đồng:</small>
+                    <p class="fw-bold mb-0">CONTRACT-2024-001</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Nhóm:</small>
+                    <p class="mb-0">Nhóm Tesla Model 3</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Ngày tạo:</small>
+                    <p class="mb-0">01/09/2024</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Ngày hết hạn:</small>
+                    <p class="mb-0">01/09/2025</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Thành viên đã ký:</small>
+                    <div class="d-flex gap-2 mt-1">
+                        <span class="badge bg-success">4/4</span>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-eye me-2"></i>Xem chi tiết
+                    </a>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-download me-2"></i>Tải PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contract 2 -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Hợp đồng đồng sở hữu Toyota Prius</h6>
+                    <span class="badge bg-warning">Chờ ký</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted">Mã hợp đồng:</small>
+                    <p class="fw-bold mb-0">CONTRACT-2024-002</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Nhóm:</small>
+                    <p class="mb-0">Nhóm Toyota Prius</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Ngày tạo:</small>
+                    <p class="mb-0">15/10/2024</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Ngày hết hạn:</small>
+                    <p class="mb-0">15/10/2025</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Thành viên đã ký:</small>
+                    <div class="d-flex gap-2 mt-1">
+                        <span class="badge bg-warning">2/3</span>
+                    </div>
+                </div>
+                <div class="alert alert-warning mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Còn 1 thành viên chưa ký
+                </div>
+                <div class="d-grid gap-2 mt-3">
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-eye me-2"></i>Xem chi tiết
+                    </a>
+                    <button class="btn btn-outline-warning">
+                        <i class="bi bi-pen me-2"></i>Ký ngay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Trước</a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Sau</a>
+        </li>
+    </ul>
+</nav>
+

@@ -1,0 +1,338 @@
+@page
+@model Co_owner_Vehicle.Pages.Dashboard.CoOwnerModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Dashboard</h2>
+        <p class="text-muted mb-0">Xin chào, <strong>@Model.GetCurrentUserFullName()</strong>! Đây là tổng quan hoạt động của bạn.</p>
+    </div>
+    <div>
+        <a asp-page="/Bookings/Calendar" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Đặt lịch xe
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon primary">
+                <i class="bi bi-car-front"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.TotalVehicles</div>
+            <div class="stat-card-label">Xe đang sở hữu</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-check-circle"></i> @Model.Stats.ActiveVehicles/@Model.Stats.TotalVehicles hoạt động
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.BookingsThisMonth</div>
+            <div class="stat-card-label">Lịch đặt tháng này</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-calendar-event"></i> @Model.Stats.UpcomingBookings lịch sắp tới
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-receipt"></i>
+            </div>
+            <div class="stat-card-value">@($"{Model.Stats.TotalExpensesThisMonth:N0}")</div>
+            <div class="stat-card-label">Chi phí tháng này (VNĐ)</div>
+            <div class="stat-card-change @(Model.Stats.PendingExpenseCount > 0 ? "negative" : "positive")">
+                <i class="bi bi-@(Model.Stats.PendingExpenseCount > 0 ? "exclamation" : "check")"></i> @Model.Stats.PendingExpenseCount khoản chờ duyệt
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="bi bi-credit-card"></i>
+            </div>
+            <div class="stat-card-value">@($"{Model.Stats.OutstandingAmount:N0}")</div>
+            <div class="stat-card-label">Công nợ chờ thanh toán (VNĐ)</div>
+            <div class="stat-card-change @(Model.Stats.PendingPaymentCount > 0 ? "negative" : "positive")">
+                <i class="bi bi-@(Model.Stats.PendingPaymentCount > 0 ? "arrow-up" : "check")"></i> @Model.Stats.PendingPaymentCount khoản chưa thanh toán
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Row -->
+<div class="row g-3">
+    <!-- Left Column -->
+    <div class="col-12 col-lg-8">
+        <!-- My Vehicles -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-car-front me-2"></i>Xe của tôi</span>
+                <a asp-page="/Vehicles/Index" class="text-primary text-decoration-none fs-7">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="card-body">
+                @if (Model.UserVehicles.Any())
+                {
+                    @foreach (var vehicle in Model.UserVehicles)
+                    {
+                        var ownershipPercentage = Model.OwnershipShares.GetValueOrDefault(vehicle.VehicleId, 0);
+                        var vehicleTypeClass = vehicle.VehicleType switch
+                        {
+                            VehicleType.ElectricCar => "primary",
+                            VehicleType.HybridCar => "success",
+                            VehicleType.GasolineCar => "warning",
+                            _ => "secondary"
+                        };
+                        var vehicleTypeText = vehicle.VehicleType switch
+                        {
+                            VehicleType.ElectricCar => "Xe điện",
+                            VehicleType.HybridCar => "Hybrid",
+                            VehicleType.GasolineCar => "Xăng",
+                            _ => "Khác"
+                        };
+                        
+                        <div class="d-flex align-items-center p-3 border rounded mb-3">
+                            <div class="bg-@vehicleTypeClass bg-opacity-10 p-3 rounded me-3">
+                                <i class="bi bi-car-front-fill fs-1 text-@vehicleTypeClass"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">@vehicle.Brand @vehicle.Model</h5>
+                                <p class="text-muted mb-1 fs-7">
+                                    Biển số: <strong>@vehicle.LicensePlate</strong> • 
+                                    Tỷ lệ sở hữu: <strong>@ownershipPercentage.ToString("N2")%</strong>
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-@(vehicle.Status == VehicleStatus.Active ? "success" : "secondary")">
+                                        @(vehicle.Status == VehicleStatus.Active ? "Hoạt động" : vehicle.Status.ToString())
+                                    </span>
+                                    <span class="badge bg-info">@vehicleTypeText</span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <p class="text-muted mb-1 fs-7">Km hiện tại</p>
+                                <h5 class="mb-0">@($"{vehicle.CurrentMileage:N0}") km</h5>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-car-front fs-1 d-block mb-2"></i>
+                        <p>Bạn chưa có xe nào trong hệ thống</p>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Recent Bookings -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar-check me-2"></i>Lịch đặt gần đây</span>
+                <a asp-page="/Bookings/MyBookings" class="text-primary text-decoration-none fs-7">Xem lịch <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.RecentBookings.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Xe</th>
+                                    <th>Thời gian</th>
+                                    <th>Mục đích</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in Model.RecentBookings)
+                                {
+                                    var statusClass = booking.Status switch
+                                    {
+                                        BookingStatus.Confirmed => "success",
+                                        BookingStatus.Pending => "warning",
+                                        BookingStatus.Cancelled => "danger",
+                                        BookingStatus.Completed => "info",
+                                        _ => "secondary"
+                                    };
+                                    var statusText = booking.Status switch
+                                    {
+                                        BookingStatus.Confirmed => "Đã duyệt",
+                                        BookingStatus.Pending => "Chờ duyệt",
+                                        BookingStatus.Cancelled => "Đã hủy",
+                                        BookingStatus.Completed => "Hoàn thành",
+                                        _ => booking.Status.ToString()
+                                    };
+                                    
+                                    <tr>
+                                        <td>
+                                            <strong>@booking.Vehicle?.Brand @booking.Vehicle?.Model</strong><br>
+                                            <small class="text-muted">@booking.Vehicle?.LicensePlate</small>
+                                        </td>
+                                        <td>
+                                            @booking.StartTime.ToString("dd/MM/yyyy")<br>
+                                            <small class="text-muted">@booking.StartTime.ToString("HH:mm") - @booking.EndTime.ToString("HH:mm")</small>
+                                        </td>
+                                        <td>@booking.Purpose</td>
+                                        <td><span class="badge bg-@statusClass">@statusText</span></td>
+                                        <td>
+                                            <a asp-page="/Bookings/Details" asp-route-id="@booking.BookingScheduleId" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                        <p>Chưa có lịch đặt nào</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div class="col-12 col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-lightning-charge me-2"></i>Thao tác nhanh
+            </div>
+            <div class="card-body d-grid gap-2">
+                <button class="btn btn-outline-primary text-start">
+                    <i class="bi bi-calendar-plus me-2"></i>Đặt lịch xe
+                </button>
+                <button class="btn btn-outline-success text-start">
+                    <i class="bi bi-receipt me-2"></i>Thêm chi phí
+                </button>
+                <button class="btn btn-outline-warning text-start">
+                    <i class="bi bi-credit-card me-2"></i>Thanh toán
+                </button>
+                <button class="btn btn-outline-info text-start">
+                    <i class="bi bi-graph-up me-2"></i>Xem báo cáo
+                </button>
+            </div>
+        </div>
+        
+        <!-- Recent Expenses -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-receipt me-2"></i>Chi phí gần đây</span>
+                <a asp-page="/Expenses/Index" class="text-primary text-decoration-none fs-7">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentExpenses.Any())
+                {
+                    @foreach (var expense in Model.RecentExpenses.Take(3))
+                    {
+                        var statusClass = expense.Status switch
+                        {
+                            ExpenseStatus.Approved => "success",
+                            ExpenseStatus.Pending => "warning",
+                            ExpenseStatus.Rejected => "danger",
+                            _ => "secondary"
+                        };
+                        var statusText = expense.Status switch
+                        {
+                            ExpenseStatus.Approved => "Đã duyệt",
+                            ExpenseStatus.Pending => "Chờ duyệt",
+                            ExpenseStatus.Rejected => "Từ chối",
+                            _ => expense.Status.ToString()
+                        };
+                        
+                        var userShare = Model.GetUserExpenseShare(expense.ExpenseId, Model.GetCurrentUserId());
+                        var sharePercentage = expense.Amount > 0 ? (userShare / expense.Amount) * 100 : 0;
+                        
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="mb-1 fw-semibold">@expense.ExpenseTitle</p>
+                                    <small class="text-muted">
+                                        @expense.Vehicle?.Brand @expense.Vehicle?.Model • 
+                                        @expense.ExpenseDate.ToString("dd/MM/yyyy")
+                                    </small>
+                                </div>
+                                <span class="badge bg-@statusClass">@statusText</span>
+                            </div>
+                            <div class="mt-2">
+                                <strong class="text-primary">@($"{expense.Amount:N0}")đ</strong>
+                                <small class="text-muted ms-2">
+                                    • Phần của bạn: @($"{userShare:N0}")đ (@sharePercentage.ToString("N1")%)
+                                </small>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-3 text-muted">
+                        <i class="bi bi-receipt fs-4 d-block mb-2"></i>
+                        <p class="mb-0 fs-7">Chưa có chi phí</p>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Notifications -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-bell me-2"></i>Thông báo
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2 mb-3">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <i class="bi bi-check-lg text-white"></i>
+                    </div>
+                    <div>
+                        <p class="mb-1 fs-7"><strong>Lịch đặt được duyệt</strong></p>
+                        <small class="text-muted">Tesla Model 3 - 29/10/2024</small>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mb-3">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <i class="bi bi-receipt text-white"></i>
+                    </div>
+                    <div>
+                        <p class="mb-1 fs-7"><strong>Chi phí mới</strong></p>
+                        <small class="text-muted">Phí sạc điện - 500.000đ</small>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                        <i class="bi bi-exclamation-lg text-white"></i>
+                    </div>
+                    <div>
+                        <p class="mb-1 fs-7"><strong>Nhắc nhở thanh toán</strong></p>
+                        <small class="text-muted">Công nợ: 1.200.000đ</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        console.log('Dashboard loaded');
+    </script>
+}
+

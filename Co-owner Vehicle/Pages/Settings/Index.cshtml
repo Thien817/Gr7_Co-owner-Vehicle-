@@ -1,0 +1,452 @@
+@page
+@model Co_owner_Vehicle.Pages.Settings.IndexModel
+@{
+    ViewData["Title"] = "Cài đặt";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-gear text-primary me-2"></i>Cài đặt
+        </h2>
+        <p class="text-muted mb-0">Quản lý cài đặt tài khoản và hệ thống</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Sidebar - Settings Menu -->
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="list-group list-group-flush">
+                <a href="#account" class="list-group-item list-group-item-action active" data-bs-toggle="pill" data-bs-target="#accountTab">
+                    <i class="bi bi-person me-2"></i>Tài khoản
+                </a>
+                <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="pill" data-bs-target="#notificationsTab">
+                    <i class="bi bi-bell me-2"></i>Thông báo
+                </a>
+                <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="pill" data-bs-target="#securityTab">
+                    <i class="bi bi-shield-lock me-2"></i>Bảo mật
+                </a>
+                <a href="#preferences" class="list-group-item list-group-item-action" data-bs-toggle="pill" data-bs-target="#preferencesTab">
+                    <i class="bi bi-sliders me-2"></i>Tùy chọn
+                </a>
+                <a href="#privacy" class="list-group-item list-group-item-action" data-bs-toggle="pill" data-bs-target="#privacyTab">
+                    <i class="bi bi-eye-slash me-2"></i>Quyền riêng tư
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Content - Settings Panels -->
+    <div class="col-lg-9">
+        <div class="tab-content">
+            <!-- Account Settings -->
+            <div class="tab-pane fade show active" id="accountTab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-person me-2"></i>Cài đặt tài khoản
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="nguyenvana@email.com">
+                                    <small class="text-muted">Email này được dùng để đăng nhập</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="tel" class="form-control" value="0901111111">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Ngôn ngữ</label>
+                                    <select class="form-select">
+                                        <option selected>Tiếng Việt</option>
+                                        <option>English</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Múi giờ</label>
+                                    <select class="form-select">
+                                        <option selected>UTC+7 (Vietnam)</option>
+                                        <option>UTC+0 (GMT)</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Định dạng ngày tháng</label>
+                                    <select class="form-select">
+                                        <option selected>DD/MM/YYYY</option>
+                                        <option>MM/DD/YYYY</option>
+                                        <option>YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-2"></i>Lưu thay đổi
+                                </button>
+                                <button type="button" class="btn btn-secondary">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Settings -->
+            <div class="tab-pane fade" id="notificationsTab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-bell me-2"></i>Cài đặt thông báo
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Email Notifications</h6>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="emailBooking" checked>
+                                    <label class="form-check-label" for="emailBooking">
+                                        Thông báo khi lịch đặt được duyệt/hủy
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="emailExpense" checked>
+                                    <label class="form-check-label" for="emailExpense">
+                                        Thông báo về chi phí mới
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="emailPayment">
+                                    <label class="form-check-label" for="emailPayment">
+                                        Thông báo thanh toán
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="emailWeekly" checked>
+                                    <label class="form-check-label" for="emailWeekly">
+                                        Báo cáo tuần qua email
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Push Notifications</h6>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="pushBooking" checked>
+                                    <label class="form-check-label" for="pushBooking">
+                                        Thông báo đẩy cho lịch đặt
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="pushExpense" checked>
+                                    <label class="form-check-label" for="pushExpense">
+                                        Thông báo đẩy cho chi phí
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pushUrgent">
+                                    <label class="form-check-label" for="pushUrgent">
+                                        Chỉ thông báo khẩn cấp
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-2"></i>Lưu cài đặt
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="tab-pane fade" id="securityTab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-shield-lock me-2"></i>Bảo mật
+                    </div>
+                    <div class="card-body">
+                        <!-- Two-Factor Authentication -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h6 class="mb-1">Xác thực 2 lớp (2FA)</h6>
+                                    <small class="text-muted">Tăng cường bảo mật cho tài khoản</small>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable2FA">
+                                    <label class="form-check-label" for="enable2FA"></label>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Khi bật 2FA, bạn sẽ cần mã xác thực từ ứng dụng mobile để đăng nhập.
+                            </div>
+                        </div>
+
+                        <!-- Login History -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <h6 class="mb-3">Lịch sử đăng nhập</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Thời gian</th>
+                                            <th>Địa chỉ IP</th>
+                                            <th>Thiết bị</th>
+                                            <th>Vị trí</th>
+                                            <th>Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>29/10/2024 14:30</td>
+                                            <td>192.168.1.100</td>
+                                            <td>Chrome - Windows</td>
+                                            <td>Ho Chi Minh</td>
+                                            <td><span class="badge bg-success">Thành công</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>28/10/2024 09:15</td>
+                                            <td>192.168.1.100</td>
+                                            <td>Chrome - Windows</td>
+                                            <td>Ho Chi Minh</td>
+                                            <td><span class="badge bg-success">Thành công</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>27/10/2024 18:45</td>
+                                            <td>192.168.1.50</td>
+                                            <td>Mobile - Android</td>
+                                            <td>Ho Chi Minh</td>
+                                            <td><span class="badge bg-success">Thành công</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Active Sessions -->
+                        <div class="mb-4 pb-4 border-bottom">
+                            <h6 class="mb-3">Phiên đăng nhập đang hoạt động</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                                <div>
+                                    <strong>Windows PC - Chrome</strong><br>
+                                    <small class="text-muted">192.168.1.100 • Ho Chi Minh</small><br>
+                                    <small class="text-muted">Đăng nhập: 29/10/2024 14:30</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-x-lg me-1"></i>Đăng xuất
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Change Password -->
+                        <div>
+                            <h6 class="mb-3">Đổi mật khẩu</h6>
+                            <form>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Mật khẩu hiện tại</label>
+                                        <input type="password" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mật khẩu mới</label>
+                                        <input type="password" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                                        <input type="password" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-shield-lock me-2"></i>Đổi mật khẩu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="tab-pane fade" id="preferencesTab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-sliders me-2"></i>Tùy chọn hiển thị
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Chế độ hiển thị</h6>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="theme" id="lightTheme" checked>
+                                    <label class="form-check-label" for="lightTheme">
+                                        <i class="bi bi-brightness-high me-2"></i>Sáng
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="theme" id="darkTheme">
+                                    <label class="form-check-label" for="darkTheme">
+                                        <i class="bi bi-moon me-2"></i>Tối
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="theme" id="autoTheme">
+                                    <label class="form-check-label" for="autoTheme">
+                                        <i class="bi bi-circle-half me-2"></i>Tự động (theo hệ thống)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Density</h6>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="density" id="comfortable" checked>
+                                    <label class="form-check-label" for="comfortable">Thoải mái</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="density" id="compact">
+                                    <label class="form-check-label" for="compact">Dày đặc</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="density" id="spacious">
+                                    <label class="form-check-label" for="spacious">Rộng rãi</label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Cài đặt khác</h6>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoSave" checked>
+                                    <label class="form-check-label" for="autoSave">
+                                        Tự động lưu khi chỉnh sửa
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="showTips" checked>
+                                    <label class="form-check-label" for="showTips">
+                                        Hiển thị tooltips và gợi ý
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enableAnimations" checked>
+                                    <label class="form-check-label" for="enableAnimations">
+                                        Bật animations và transitions
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-2"></i>Lưu tùy chọn
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy -->
+            <div class="tab-pane fade" id="privacyTab">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-eye-slash me-2"></i>Quyền riêng tư
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Hiển thị thông tin</h6>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="showEmail" checked>
+                                    <label class="form-check-label" for="showEmail">
+                                        Cho phép thành viên nhóm xem email của tôi
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="showPhone">
+                                    <label class="form-check-label" for="showPhone">
+                                        Cho phép thành viên nhóm xem số điện thoại
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showUsage" checked>
+                                    <label class="form-check-label" for="showUsage">
+                                        Hiển thị lịch sử sử dụng trong nhóm
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Dữ liệu & Analytics</h6>
+                                <div class="alert alert-warning mb-3">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Thu thập dữ liệu để cải thiện dịch vụ</strong><br>
+                                    Chúng tôi thu thập dữ liệu sử dụng để phân tích và cải thiện trải nghiệm người dùng.
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="allowAnalytics" checked>
+                                    <label class="form-check-label" for="allowAnalytics">
+                                        Cho phép thu thập dữ liệu analytics
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="allowTracking">
+                                    <label class="form-check-label" for="allowTracking">
+                                        Cho phép theo dõi hành vi (để cá nhân hóa)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-4">
+                                <h6 class="mb-3">Xóa dữ liệu</h6>
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Cảnh báo!</strong> Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn.
+                                </div>
+                                <button type="button" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-2"></i>Xóa tài khoản
+                                </button>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-2"></i>Lưu cài đặt
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Tab switching
+        document.querySelectorAll('[data-bs-toggle="pill"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-bs-target');
+                document.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+}
+

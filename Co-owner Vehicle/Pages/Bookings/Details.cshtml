@@ -1,0 +1,422 @@
+@page
+@model Co_owner_Vehicle.Pages.Bookings.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết đặt lịch";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Bookings/Calendar">Đặt lịch</a></li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-calendar-check text-primary me-2"></i>Chi tiết đặt lịch
+        </h2>
+        <p class="text-muted mb-0">Thông tin chi tiết và quản lý đặt lịch sử dụng xe</p>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+        </button>
+        <button class="btn btn-outline-danger">
+            <i class="bi bi-x-circle me-2"></i>Hủy đặt lịch
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-printer me-2"></i>In
+        </button>
+    </div>
+</div>
+
+<!-- Booking Header Card -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-calendar-event fs-1 text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="fw-bold mb-2">Đặt lịch sử dụng xe</h4>
+                        <div class="d-flex gap-2 flex-wrap mb-2">
+                            <span class="badge bg-success fs-6">Đã xác nhận</span>
+                            <span class="badge bg-primary">Ưu tiên cao</span>
+                            <span class="badge bg-info">Công tác</span>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Đi công tác tại TP.HCM
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Xe</label>
+                        <p class="mb-0">
+                            <i class="bi bi-car-front me-1"></i>Tesla Model 3 - 30A-12345
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Người đặt</label>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-xs bg-primary text-white me-2">NV</div>
+                            <span>Nguyễn Văn A</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Thời gian bắt đầu</label>
+                        <p class="mb-0">
+                            <i class="bi bi-calendar3 me-1"></i>29/10/2024 08:00
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Thời gian kết thúc</label>
+                        <p class="mb-0">
+                            <i class="bi bi-calendar3 me-1"></i>29/10/2024 12:00
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Thời lượng</label>
+                        <p class="mb-0"><strong>4 giờ</strong></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Người duyệt</label>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-xs bg-success text-white me-2">LT</div>
+                            <span>Lê Thị B</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="mb-3">Trạng thái</h6>
+                        <div class="mb-3 pb-3 border-bottom">
+                            <span class="badge bg-success fs-6">Đã xác nhận</span>
+                            <p class="text-muted small mb-0 mt-2">Duyệt bởi: Lê Thị B</p>
+                            <p class="text-muted small mb-0">Ngày: 28/10/2024 14:30</p>
+                        </div>
+                        <div class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted">Check-in</small>
+                            <p class="mb-0">
+                                <span class="badge bg-secondary">Chưa check-in</span>
+                            </p>
+                        </div>
+                        <div>
+                            <small class="text-muted">Check-out</small>
+                            <p class="mb-0">
+                                <span class="badge bg-secondary">Chưa check-out</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Check-in/Check-out Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Check-in / Check-out
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h6 class="mb-3">Check-in</h6>
+                            <div class="mb-3">
+                                <label class="form-label small">Số km khi nhận xe</label>
+                                <input type="number" class="form-control" placeholder="15000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Trạng thái xe</label>
+                                <select class="form-select">
+                                    <option>Tốt</option>
+                                    <option>Bình thường</option>
+                                    <option>Có vấn đề nhỏ</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Ghi chú</label>
+                                <textarea class="form-control" rows="2" placeholder="Ghi chú khi nhận xe..."></textarea>
+                            </div>
+                            <button class="btn btn-success w-100">
+                                <i class="bi bi-check-circle me-2"></i>Check-in ngay
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded mb-3">
+                            <h6 class="mb-3">Check-out</h6>
+                            <div class="mb-3">
+                                <label class="form-label small">Số km khi trả xe</label>
+                                <input type="number" class="form-control" placeholder="15080">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Tổng số km đã đi</label>
+                                <input type="number" class="form-control" placeholder="80" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Trạng thái xe khi trả</label>
+                                <select class="form-select">
+                                    <option>Tốt</option>
+                                    <option>Bình thường</option>
+                                    <option>Có vấn đề nhỏ</option>
+                                    <option>Có hư hỏng</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Ghi chú</label>
+                                <textarea class="form-control" rows="2" placeholder="Ghi chú khi trả xe..."></textarea>
+                            </div>
+                            <button class="btn btn-primary w-100" disabled>
+                                <i class="bi bi-box-arrow-left me-2"></i>Check-out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage History -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Lịch sử sử dụng
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-success"></div>
+                        <div class="timeline-content">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">Đặt lịch được tạo</h6>
+                                    <p class="text-muted mb-1 small">Bởi: Nguyễn Văn A</p>
+                                    <small class="text-muted">27/10/2024 10:30</small>
+                                </div>
+                                <span class="badge bg-info">Mới tạo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-success"></div>
+                        <div class="timeline-content">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">Đặt lịch được duyệt</h6>
+                                    <p class="text-muted mb-1 small">Bởi: Lê Thị B</p>
+                                    <small class="text-muted">28/10/2024 14:30</small>
+                                </div>
+                                <span class="badge bg-success">Đã duyệt</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes & Attachments -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="bi bi-file-text me-2"></i>Ghi chú và đính kèm
+                </h6>
+                <button class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Thêm ghi chú
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú chi tiết</label>
+                    <textarea class="form-control" rows="4" placeholder="Ghi chú về đặt lịch này..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">File đính kèm</label>
+                    <input type="file" class="form-control" multiple accept="image/*,.pdf">
+                    <small class="text-muted">Hỗ trợ: JPG, PNG, PDF (Max 5MB mỗi file)</small>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-file-earmark-pdf text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Giấy phép lái xe.pdf</h6>
+                                    <small class="text-muted">2.3 MB</small>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Check-in
+                    </button>
+                    <button class="btn btn-primary" disabled>
+                        <i class="bi bi-box-arrow-left me-2"></i>Check-out
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+                    </button>
+                    <button class="btn btn-outline-danger">
+                        <i class="bi bi-x-circle me-2"></i>Hủy đặt lịch
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-printer me-2"></i>In
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Bookings -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-calendar3 me-2"></i>Đặt lịch liên quan
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action px-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">30/10/2024</h6>
+                                <small class="text-muted">08:00 - 12:00</small>
+                            </div>
+                            <span class="badge bg-warning">Chờ duyệt</span>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action px-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">01/11/2024</h6>
+                                <small class="text-muted">14:00 - 18:00</small>
+                            </div>
+                            <span class="badge bg-success">Đã xác nhận</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Info -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-car-front me-2"></i>Thông tin xe
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Xe</label>
+                    <p class="mb-0">Tesla Model 3</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Biển số</label>
+                    <p class="mb-0">30A-12345</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Số km hiện tại</label>
+                    <p class="mb-0"><strong>15,000 km</strong></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Trạng thái</label>
+                    <p class="mb-0"><span class="badge bg-success">Hoạt động</span></p>
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="bi bi-eye me-1"></i>Xem chi tiết xe
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -37px;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px currentColor;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: -32px;
+        top: 12px;
+        width: 2px;
+        height: calc(100% - 12px);
+        background: #e9ecef;
+    }
+
+    .timeline-content {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Auto calculate km when check-out
+        document.querySelector('input[placeholder="15080"]').addEventListener('input', function() {
+            const startKm = parseInt(document.querySelector('input[placeholder="15000"]').value) || 0;
+            const endKm = parseInt(this.value) || 0;
+            if (endKm >= startKm) {
+                document.querySelector('input[placeholder="80"]').value = endKm - startKm;
+            }
+        });
+    </script>
+}
+

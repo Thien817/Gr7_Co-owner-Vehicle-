@@ -1,0 +1,299 @@
+@page
+@model Co_owner_Vehicle.Pages.Vehicles.IndexModel
+@{
+    ViewData["Title"] = "Quản lý xe";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-car-front text-primary me-2"></i>Quản lý xe
+        </h2>
+        <p class="text-muted mb-0">Danh sách xe đồng sở hữu của bạn</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-secondary me-2">
+            <i class="bi bi-funnel me-2"></i>Lọc
+        </button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVehicleModal">
+            <i class="bi bi-plus-lg me-2"></i>Thêm xe mới
+        </button>
+    </div>
+</div>
+
+<!-- Filter & Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="searchTerm" 
+                           value="@Model.SearchTerm" placeholder="🔍 Tìm kiếm theo tên, biển số...">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="vehicleTypeFilter" asp-for="VehicleTypeFilter">
+                        <option value="">Tất cả loại xe</option>
+                        <option value="ElectricCar">Xe điện</option>
+                        <option value="HybridCar">Hybrid</option>
+                        <option value="GasolineCar">Xăng</option>
+                        <option value="Motorcycle">Xe máy</option>
+                        <option value="Bicycle">Xe đạp</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="statusFilter" asp-for="StatusFilter">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Active">Hoạt động</option>
+                        <option value="Repair">Đang sửa</option>
+                        <option value="Maintenance">Bảo trì</option>
+                        <option value="Inactive">Ngừng hoạt động</option>
+                        <option value="Sold">Đã bán</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <a asp-page="/Vehicles/Index" class="btn btn-outline-danger w-100">
+                        <i class="bi bi-x-lg me-2"></i>Xóa bộ lọc
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Vehicles Grid -->
+@if (Model.Vehicles.Any())
+{
+    <div class="row g-4">
+        @foreach (var item in Model.Vehicles)
+        {
+            var vehicle = item.Vehicle;
+            var statusBadge = vehicle.Status switch
+            {
+                VehicleStatus.Active => ("bg-success", "Hoạt động"),
+                VehicleStatus.Repair => ("bg-primary", "Đang sửa"),
+                VehicleStatus.Maintenance => ("bg-warning", "Bảo trì"),
+                VehicleStatus.Inactive => ("bg-danger", "Ngừng hoạt động"),
+                VehicleStatus.Sold => ("bg-secondary", "Đã bán"),
+                _ => ("bg-secondary", vehicle.Status.ToString())
+            };
+            
+            var typeBadge = vehicle.VehicleType switch
+            {
+                VehicleType.ElectricCar => ("bg-info", "Xe điện"),
+                VehicleType.HybridCar => ("bg-warning", "Hybrid"),
+                VehicleType.GasolineCar => ("bg-danger", "Xăng"),
+                VehicleType.Motorcycle => ("bg-secondary", "Xe máy"),
+                VehicleType.Bicycle => ("bg-secondary", "Xe đạp"),
+                _ => ("bg-secondary", vehicle.VehicleType.ToString())
+            };
+            
+            var gradientClass = (vehicle.VehicleId % 4) switch
+            {
+                0 => "bg-gradient-primary",
+                1 => "bg-gradient-success",
+                2 => "bg-gradient-secondary",
+                _ => "bg-gradient-info"
+            };
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 hover-lift">
+                    <div class="position-relative">
+                        <div class="@gradientClass p-5 text-center">
+                            <i class="bi bi-car-front-fill display-1 text-white"></i>
+                        </div>
+                        <span class="badge @statusBadge.Item1 position-absolute top-0 end-0 m-3">
+                            <i class="bi bi-check-circle me-1"></i>@statusBadge.Item2
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">@vehicle.Brand @vehicle.Model</h5>
+                                <p class="text-muted mb-0">
+                                    <i class="bi bi-credit-card-2-front me-1"></i>
+                                    <strong>@vehicle.LicensePlate</strong>
+                                </p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-page="/Vehicles/Details" asp-route-id="@vehicle.VehicleId">
+                                        <i class="bi bi-eye me-2"></i>Xem chi tiết
+                                    </a></li>
+                                    @if (Model.IsAdmin() || Model.IsStaff() || item.OwnershipPercentage > 0)
+                                    {
+                                        <li><a class="dropdown-item" asp-page="/Vehicles/Edit" asp-route-id="@vehicle.VehicleId">
+                                            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+                                        </a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-page="/Bookings/Create" asp-route-vehicleId="@vehicle.VehicleId">
+                                        <i class="bi bi-calendar-check me-2"></i>Đặt lịch
+                                    </a></li>
+                                    @if (Model.IsAdmin() || Model.IsStaff())
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#">
+                                            <i class="bi bi-trash me-2"></i>Xóa xe
+                                        </a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="badge @typeBadge.Item1">@typeBadge.Item2</span>
+                                @if (vehicle.Year.HasValue)
+                                {
+                                    <span class="badge bg-secondary">@vehicle.Year</span>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="border-top pt-3">
+                            <div class="row text-center g-0">
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Km hiện tại</small>
+                                    <strong class="text-primary">@(vehicle.CurrentMileage?.ToString("#,##0") ?? "0")</strong>
+                                </div>
+                                <div class="col-4 border-start border-end">
+                                    <small class="text-muted d-block">Sở hữu</small>
+                                    <strong class="text-success">@($"{item.OwnershipPercentage:N0}%")</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Thành viên</small>
+                                    <strong>@item.MemberCount</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex gap-2">
+                            <a asp-page="/Vehicles/Details" asp-route-id="@vehicle.VehicleId" class="btn btn-sm btn-outline-primary flex-fill">
+                                <i class="bi bi-eye me-1"></i>Chi tiết
+                            </a>
+                            <a asp-page="/Bookings/Create" asp-route-vehicleId="@vehicle.VehicleId" class="btn btn-sm btn-primary flex-fill">
+                                <i class="bi bi-calendar-plus me-1"></i>Đặt lịch
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-car-front display-1 text-muted d-block mb-3"></i>
+            <h5 class="text-muted">Không tìm thấy xe nào</h5>
+            <p class="text-muted">@(string.IsNullOrEmpty(Model.SearchTerm) && !Model.VehicleTypeFilter.HasValue && !Model.StatusFilter.HasValue 
+                ? "Bạn chưa có xe nào trong hệ thống." 
+                : "Không có xe nào phù hợp với bộ lọc của bạn.")</p>
+            @if (Model.IsAdmin() || Model.IsStaff())
+            {
+                <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addVehicleModal">
+                    <i class="bi bi-plus-lg me-2"></i>Thêm xe mới
+                </button>
+            }
+        </div>
+    </div>
+}
+
+<!-- Pagination -->
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Trước</a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Sau</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Add Vehicle Modal -->
+<div class="modal fade" id="addVehicleModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle text-primary me-2"></i>Thêm xe mới
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Hãng xe</label>
+                            <input type="text" class="form-control" placeholder="VD: Tesla, Toyota...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Model</label>
+                            <input type="text" class="form-control" placeholder="VD: Model 3, Camry...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Biển số xe</label>
+                            <input type="text" class="form-control" placeholder="VD: 30A-12345">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Loại xe</label>
+                            <select class="form-select">
+                                <option>Xe điện</option>
+                                <option>Hybrid</option>
+                                <option>Xăng</option>
+                                <option>Dầu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Năm sản xuất</label>
+                            <input type="number" class="form-control" placeholder="2023">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Màu sắc</label>
+                            <input type="text" class="form-control" placeholder="VD: Đen, Trắng...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Số VIN</label>
+                            <input type="text" class="form-control" placeholder="Số khung">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" rows="3" placeholder="Thông tin chi tiết về xe..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-2"></i>Thêm xe
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    }
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+    .bg-gradient-secondary {
+        background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+    }
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+    }
+</style>
+

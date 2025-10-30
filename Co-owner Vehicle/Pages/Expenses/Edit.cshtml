@@ -1,0 +1,169 @@
+@page
+@model Co_owner_Vehicle.Pages.Expenses.EditModel
+@{
+    ViewData["Title"] = "Chỉnh sửa chi phí";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Expenses/Index">Chi phí</a></li>
+                <li class="breadcrumb-item"><a asp-page="/Expenses/Details">Chi tiết</a></li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-pencil-square text-primary me-2"></i>Chỉnh sửa chi phí
+        </h2>
+        <p class="text-muted mb-0">Cập nhật thông tin chi phí</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column - Form -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Thông tin chi phí
+                </h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Chọn xe <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn xe --</option>
+                                <option selected>Tesla Model 3 - 30A-12345</option>
+                                <option>Toyota Prius - 30B-67890</option>
+                                <option>Honda Civic - 30C-11111</option>
+                                <option>VinFast VF8 - 30D-22222</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Chọn nhóm <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn nhóm --</option>
+                                <option selected>Nhóm Tesla Model 3</option>
+                                <option>Nhóm Toyota Prius</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Danh mục chi phí <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option selected>Phí sạc điện</option>
+                                <option>Bảo dưỡng định kỳ</option>
+                                <option>Bảo hiểm xe</option>
+                                <option>Đăng kiểm</option>
+                                <option>Vệ sinh xe</option>
+                                <option>Sửa chữa</option>
+                                <option>Nhiên liệu</option>
+                                <option>Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà cung cấp</label>
+                            <input type="text" class="form-control" value="VinFast Charging Station">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Tiêu đề chi phí <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="Phí sạc điện tháng 10/2024" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số tiền <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="500000" required>
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày chi <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" value="2024-10-18" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phương thức chia <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="1" selected>Theo tỷ lệ sở hữu</option>
+                                <option value="2">Theo mức độ sử dụng</option>
+                                <option value="3">Chia đều</option>
+                                <option value="4">Tùy chỉnh</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select class="form-select">
+                                <option value="1">Chờ duyệt</option>
+                                <option value="2" selected>Đã duyệt</option>
+                                <option value="3">Từ chối</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" rows="4">Chi phí sạc điện tháng 10/2024 tại trạm sạc VinFast</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Hóa đơn / Biên lai</label>
+                            <input type="file" class="form-control" accept="image/*,.pdf" multiple>
+                            <small class="text-muted">Hỗ trợ: JPG, PNG, PDF (Max 5MB mỗi file)</small>
+                            <div class="mt-2">
+                                <span class="badge bg-secondary me-2">Hóa đơn sạc điện.pdf</span>
+                                <span class="badge bg-secondary">Ảnh chụp máy sạc.jpg</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="/Expenses/Details" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Info Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Lưu ý
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Chú ý:</strong> Nếu chi phí đã được thanh toán, việc chỉnh sửa có thể ảnh hưởng đến lịch sử thanh toán.
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-page="/Expenses/Details" class="btn btn-outline-primary">
+                        <i class="bi bi-eye me-2"></i>Xem chi tiết
+                    </a>
+                    <a asp-page="/Expenses/Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-list me-2"></i>Xem danh sách
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

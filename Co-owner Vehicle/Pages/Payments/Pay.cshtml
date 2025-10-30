@@ -1,0 +1,357 @@
+@page
+@model Co_owner_Vehicle.Pages.Payments.PayModel
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Payments/Index">Thanh toán</a></li>
+                <li class="breadcrumb-item active">Thanh toán</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-credit-card text-primary me-2"></i>Thanh toán
+        </h2>
+        <p class="text-muted mb-0">Thực hiện thanh toán chi phí</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column - Payment Form -->
+    <div class="col-lg-8">
+        <!-- Payment Summary -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Thông tin thanh toán
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Chi phí</label>
+                        <p class="fw-bold mb-0">Phí sạc điện tháng 10/2024</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Xe</label>
+                        <p class="mb-0">Tesla Model 3 - 30A-12345</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Số tiền cần thanh toán</label>
+                        <h3 class="fw-bold text-primary mb-0">150,000 đ</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Hạn thanh toán</label>
+                        <p class="mb-0">
+                            <span class="badge bg-warning">30/10/2024</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-credit-card me-2"></i>Phương thức thanh toán
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-primary payment-method-card">
+                            <div class="card-body text-center">
+                                <input type="radio" name="paymentMethod" id="methodBank" value="bank" checked class="form-check-input">
+                                <label for="methodBank" class="w-100">
+                                    <i class="bi bi-bank fs-1 text-primary mb-2 d-block"></i>
+                                    <strong>Chuyển khoản ngân hàng</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-secondary payment-method-card">
+                            <div class="card-body text-center">
+                                <input type="radio" name="paymentMethod" id="methodMoMo" value="momo" class="form-check-input">
+                                <label for="methodMoMo" class="w-100">
+                                    <i class="bi bi-phone fs-1 text-danger mb-2 d-block"></i>
+                                    <strong>Ví điện tử (MoMo)</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-secondary payment-method-card">
+                            <div class="card-body text-center">
+                                <input type="radio" name="paymentMethod" id="methodZalo" value="zalo" class="form-check-input">
+                                <label for="methodZalo" class="w-100">
+                                    <i class="bi bi-phone fs-1 text-info mb-2 d-block"></i>
+                                    <strong>Ví điện tử (ZaloPay)</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-secondary payment-method-card">
+                            <div class="card-body text-center">
+                                <input type="radio" name="paymentMethod" id="methodCash" value="cash" class="form-check-input">
+                                <label for="methodCash" class="w-100">
+                                    <i class="bi bi-cash-stack fs-1 text-success mb-2 d-block"></i>
+                                    <strong>Tiền mặt</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Transfer Details -->
+        <div class="card mb-4" id="bankDetails">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-bank me-2"></i>Thông tin chuyển khoản
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Vui lòng chuyển khoản đúng số tiền và nội dung để hệ thống tự động xác nhận.
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ngân hàng</label>
+                        <input type="text" class="form-control" value="Vietcombank" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Số tài khoản</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="1234567890" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('1234567890')">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Chủ tài khoản</label>
+                        <input type="text" class="form-control" value="CO-OWNER VEHICLE COMPANY" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Số tiền</label>
+                        <input type="text" class="form-control" value="150,000 đ" readonly>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Nội dung chuyển khoản</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="PHI SAC DIEN THANG 10/2024 - NV001" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('PHI SAC DIEN THANG 10/2024 - NV001')">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Vui lòng copy nội dung này khi chuyển khoản</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Details Form -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-file-text me-2"></i>Thông tin thanh toán
+                </h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Số tiền thanh toán <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="150000" required>
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày thanh toán <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số tham chiếu / Mã giao dịch</label>
+                            <input type="text" class="form-control" placeholder="VD: REF123456789">
+                            <small class="text-muted">Mã giao dịch từ ngân hàng hoặc ví điện tử</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số tài khoản / Số điện thoại</label>
+                            <input type="text" class="form-control" placeholder="Tài khoản bạn đã chuyển từ">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" rows="3" placeholder="Ghi chú về thanh toán này..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Biên lai / Hóa đơn</label>
+                            <input type="file" class="form-control" accept="image/*,.pdf">
+                            <small class="text-muted">Upload ảnh chụp biên lai chuyển khoản hoặc screenshot</small>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="confirmPayment" required>
+                            <label class="form-check-label" for="confirmPayment">
+                                Tôi xác nhận đã thực hiện chuyển khoản và thông tin trên là chính xác
+                            </label>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Hủy
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-lg me-2"></i>Xác nhận thanh toán
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Payment Summary Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-calculator me-2"></i>Tóm tắt
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Số tiền cần thanh toán</small>
+                    <h4 class="fw-bold mb-0">150,000 đ</h4>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Phí dịch vụ</small>
+                    <h6 class="fw-bold mb-0 text-success">0 đ</h6>
+                </div>
+                <div class="mb-3 pb-3 border-bottom">
+                    <small class="text-muted">Tổng thanh toán</small>
+                    <h3 class="fw-bold text-primary mb-0">150,000 đ</h3>
+                </div>
+                <div>
+                    <small class="text-muted">Hạn thanh toán</small>
+                    <p class="mb-0">
+                        <span class="badge bg-warning">30/10/2024</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Expenses -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Chi phí liên quan
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action px-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">Phí sạc điện tháng 9/2024</h6>
+                                <small class="text-muted">150,000 đ</small>
+                            </div>
+                            <span class="badge bg-success">Đã thanh toán</span>
+                        </div>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action px-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-1">Bảo dưỡng định kỳ</h6>
+                                <small class="text-muted">500,000 đ</small>
+                            </div>
+                            <span class="badge bg-warning">Chưa thanh toán</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment History -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Lịch sử thanh toán
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <strong>Phí sạc điện</strong>
+                            <span class="text-success">150,000 đ</span>
+                        </div>
+                        <small class="text-muted">25/09/2024</small>
+                    </div>
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <strong>Bảo dưỡng</strong>
+                            <span class="text-success">500,000 đ</span>
+                        </div>
+                        <small class="text-muted">15/09/2024</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-method-card {
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .payment-method-card:hover {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    .payment-method-card input[type="radio"]:checked + label {
+        color: #0d6efd;
+    }
+
+    .payment-method-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Show/hide payment method details
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Hide all details
+                document.getElementById('bankDetails').style.display = 'none';
+                
+                // Show selected method details
+                if (this.value === 'bank') {
+                    document.getElementById('bankDetails').style.display = 'block';
+                }
+            });
+        });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Đã copy vào clipboard!');
+            });
+        }
+    </script>
+}
+

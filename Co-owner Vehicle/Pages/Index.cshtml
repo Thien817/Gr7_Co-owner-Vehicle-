@@ -1,0 +1,220 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "_HomeLayout";
+}
+
+<div class="text-center py-5">
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 text-lg-start">
+                <h1 class="display-4 fw-bold mb-4">
+                    Quản lý <span class="text-primary">Đồng sở hữu xe</span> thông minh
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Hệ thống hiện đại giúp bạn quản lý xe chung dễ dàng, minh bạch và hiệu quả. 
+                    Đặt lịch, theo dõi chi phí và thanh toán tự động.
+                </p>
+                @if (!User.Identity?.IsAuthenticated ?? true)
+                {
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-start">
+                    <a asp-page="/Account/Login" class="btn btn-primary btn-lg px-4 gap-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                    </a>
+                    <a asp-page="/Account/Register" class="btn btn-outline-primary btn-lg px-4">
+                        Đăng ký ngay
+                    </a>
+                </div>
+                }
+                else
+                {
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-start">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-page="/Dashboard/Admin" class="btn btn-primary btn-lg px-4 gap-3">
+                                <i class="bi bi-speedometer2 me-2"></i>Vào Dashboard Admin
+                            </a>
+                        }
+                        else if (User.IsInRole("Staff"))
+                        {
+                            <a asp-page="/Dashboard/Staff" class="btn btn-primary btn-lg px-4 gap-3">
+                                <i class="bi bi-speedometer2 me-2"></i>Vào Dashboard Staff
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-page="/Dashboard/CoOwner" class="btn btn-primary btn-lg px-4 gap-3">
+                                <i class="bi bi-speedometer2 me-2"></i>Vào Dashboard
+                            </a>
+                        }
+                        <form method="post" asp-page="/Account/Logout" class="d-inline">
+                            <button type="submit" class="btn btn-outline-primary btn-lg px-4">
+                                Đăng xuất
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="position-relative">
+                    <div class="bg-primary bg-opacity-10 rounded-4 p-5">
+                        <i class="bi bi-car-front-fill display-1 text-primary"></i>
+                        <div class="position-absolute top-0 end-0 translate-middle">
+                            <span class="badge bg-success fs-6 p-3">
+                                <i class="bi bi-check-circle me-1"></i>100% Minh bạch
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row g-4 py-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-5">Tính năng nổi bật</h2>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="stat-card-icon primary mx-auto mb-3">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <h5 class="card-title">Đặt lịch thông minh</h5>
+                        <p class="card-text text-muted">
+                            Xem lịch trống, đặt lịch nhanh và nhận thông báo tự động khi được duyệt.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="stat-card-icon success mx-auto mb-3">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+                        <h5 class="card-title">Quản lý chi phí</h5>
+                        <p class="card-text text-muted">
+                            Tự động chia chi phí theo tỷ lệ sở hữu hoặc mức độ sử dụng.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="stat-card-icon warning mx-auto mb-3">
+                            <i class="bi bi-credit-card"></i>
+                        </div>
+                        <h5 class="card-title">Thanh toán dễ dàng</h5>
+                        <p class="card-text text-muted">
+                            Thanh toán online qua e-wallet, banking hoặc chuyển khoản.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="stat-card-icon danger mx-auto mb-3">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h5 class="card-title">Báo cáo chi tiết</h5>
+                        <p class="card-text text-muted">
+                            Xem báo cáo tài chính, sử dụng xe và phân tích xu hướng.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="row g-4 py-5 bg-light rounded-4">
+            <div class="col-12">
+                <h2 class="fw-bold mb-5">Thống kê hệ thống</h2>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h2 class="display-4 fw-bold text-primary mb-2">150+</h2>
+                    <p class="text-muted">Người dùng đang hoạt động</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h2 class="display-4 fw-bold text-success mb-2">45</h2>
+                    <p class="text-muted">Xe được quản lý</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h2 class="display-4 fw-bold text-warning mb-2">500+</h2>
+                    <p class="text-muted">Lượt đặt lịch/tháng</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <h2 class="display-4 fw-bold text-danger mb-2">98%</h2>
+                    <p class="text-muted">Tỷ lệ hài lòng</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="row py-5">
+            <div class="col-12">
+                <div class="bg-primary text-white rounded-4 p-5">
+                    <h2 class="fw-bold mb-3">Sẵn sàng bắt đầu?</h2>
+                    <p class="lead mb-4">Tham gia cùng hàng trăm người dùng đang quản lý xe đồng sở hữu thông minh.</p>
+                    @if (!User.Identity?.IsAuthenticated ?? true)
+                    {
+                    <a asp-page="/Account/Register" class="btn btn-light btn-lg">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Đăng ký miễn phí
+                    </a>
+                    }
+                    else
+                    {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-page="/Dashboard/Admin" class="btn btn-light btn-lg">
+                                <i class="bi bi-speedometer2 me-2"></i>Vào Dashboard Admin
+                            </a>
+                        }
+                        else if (User.IsInRole("Staff"))
+                        {
+                            <a asp-page="/Dashboard/Staff" class="btn btn-light btn-lg">
+                                <i class="bi bi-speedometer2 me-2"></i>Vào Dashboard Staff
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-page="/Dashboard/CoOwner" class="btn btn-light btn-lg">
+                                <i class="bi bi-speedometer2 me-2"></i>Vào Dashboard
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

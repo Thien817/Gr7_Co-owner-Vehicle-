@@ -1,0 +1,388 @@
+@page
+@model Co_owner_Vehicle.Pages.Expenses.IndexModel
+@{
+    ViewData["Title"] = "Quản lý chi phí";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-receipt text-primary me-2"></i>Quản lý chi phí
+        </h2>
+        <p class="text-muted mb-0">Theo dõi và chia sẻ chi phí vận hành xe</p>
+    </div>
+    <a asp-page="/Expenses/Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Thêm chi phí
+    </a>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-receipt"></i>
+            </div>
+            <div class="stat-card-value">@((Model.Stats.TotalThisMonth / 1000000).ToString("F1"))M</div>
+            <div class="stat-card-label">Tổng chi phí tháng này</div>
+            <div class="stat-card-change @(Model.Stats.PercentageChange < 0 ? "negative" : "positive")">
+                <i class="bi bi-arrow-@(Model.Stats.PercentageChange < 0 ? "down" : "up")"></i> 
+                @(Model.Stats.PercentageChange.ToString("F0"))% so tháng trước
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.ApprovedThisMonth</div>
+            <div class="stat-card-label">Đã duyệt</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-arrow-up"></i> Tháng này
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.PendingThisMonth</div>
+            <div class="stat-card-label">Chờ duyệt</div>
+            <div class="stat-card-change">
+                Cần xem xét
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="bi bi-credit-card"></i>
+            </div>
+            <div class="stat-card-value">@((Model.Stats.UserShareThisMonth / 1000000).ToString("F1"))M</div>
+            <div class="stat-card-label">Phần của bạn</div>
+            <div class="stat-card-change">
+                Tháng này
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter & Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small">Tìm kiếm</label>
+                    <input type="text" class="form-control" name="searchTerm" asp-for="SearchTerm" placeholder="🔍 Tìm theo tên, mô tả...">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Xe</label>
+                    <select class="form-select" name="vehicleIdFilter" asp-for="VehicleIdFilter">
+                        <option value="">Tất cả</option>
+                        @foreach (var vehicle in Model.Vehicles)
+                        {
+                            <option value="@vehicle.VehicleId">@vehicle.Brand @vehicle.Model</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Danh mục</label>
+                    <select class="form-select" name="categoryIdFilter" asp-for="CategoryIdFilter">
+                        <option value="">Tất cả</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.ExpenseCategoryId">@category.CategoryName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Trạng thái</label>
+                    <select class="form-select" name="statusFilter" asp-for="StatusFilter">
+                        <option value="">Tất cả</option>
+                        <option value="@ExpenseStatus.Pending">Chờ duyệt</option>
+                        <option value="@ExpenseStatus.Approved">Đã duyệt</option>
+                        <option value="@ExpenseStatus.Rejected">Từ chối</option>
+                        <option value="@ExpenseStatus.Paid">Đã thanh toán</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Thời gian</label>
+                    <select class="form-select" name="timeFilter" asp-for="TimeFilter">
+                        <option value="Tháng này">Tháng này</option>
+                        <option value="Tháng trước">Tháng trước</option>
+                        <option value="3 tháng">3 tháng</option>
+                        <option value="Tất cả">Tất cả</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Expenses Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Danh sách chi phí</span>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary active">
+                <i class="bi bi-table me-1"></i>Bảng
+            </button>
+            <button class="btn btn-outline-secondary">
+                <i class="bi bi-grid-3x3 me-1"></i>Thẻ
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Chi phí</th>
+                        <th>Xe</th>
+                        <th>Ngày</th>
+                        <th>Tổng tiền</th>
+                        <th>Phần của bạn</th>
+                        <th>Trạng thái</th>
+                        <th>Người duyệt</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Expenses.Any())
+                    {
+                        @foreach (var expense in Model.Expenses)
+                        {
+                            var statusBadge = expense.Status switch
+                            {
+                                ExpenseStatus.Pending => ("bg-warning", "Chờ duyệt"),
+                                ExpenseStatus.Approved => ("bg-success", "Đã duyệt"),
+                                ExpenseStatus.Rejected => ("bg-danger", "Từ chối"),
+                                ExpenseStatus.Paid => ("bg-primary", "Đã thanh toán"),
+                                _ => ("bg-secondary", expense.Status.ToString())
+                            };
+
+                            var categoryIcon = expense.ExpenseCategory.CategoryName switch
+                            {
+                                "Phí sạc điện" => "bi-lightning-charge",
+                                "Bảo dưỡng" => "bi-tools",
+                                "Bảo hiểm" => "bi-shield-check",
+                                "Vệ sinh" => "bi-droplet",
+                                "Sửa chữa" => "bi-wrench",
+                                _ => "bi-receipt"
+                            };
+
+                            var categoryColor = expense.ExpenseCategory.CategoryName switch
+                            {
+                                "Phí sạc điện" => "warning",
+                                "Bảo dưỡng" => "primary",
+                                "Bảo hiểm" => "danger",
+                                "Vệ sinh" => "success",
+                                "Sửa chữa" => "info",
+                                _ => "secondary"
+                            };
+
+                            var timeAgo = DateTime.UtcNow - expense.ExpenseDate;
+                            var timeAgoText = timeAgo.Days switch
+                            {
+                                0 => "Hôm nay",
+                                1 => "Hôm qua",
+                                < 7 => $"{timeAgo.Days} ngày trước",
+                                < 30 => $"{timeAgo.Days / 7} tuần trước",
+                                _ => $"{timeAgo.Days / 30} tháng trước"
+                            };
+
+                            var userSharePercentage = expense.Amount > 0 ? (expense.UserShare / expense.Amount) * 100 : 0;
+
+                            <tr class="@(expense.Status == ExpenseStatus.Pending ? "table-warning" : "")">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="stat-card-icon @categoryColor" style="width: 40px; height: 40px;">
+                                            <i class="bi @categoryIcon fs-6"></i>
+                                        </div>
+                                        <div>
+                                            <strong>@expense.ExpenseTitle</strong><br>
+                                            <small class="text-muted">@(expense.VendorName ?? expense.ExpenseCategory.CategoryName)</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>@expense.Vehicle.Brand @expense.Vehicle.Model</strong><br>
+                                    <small class="text-muted">@expense.Vehicle.LicensePlate</small>
+                                </td>
+                                <td>
+                                    @expense.ExpenseDate.ToString("dd/MM/yyyy")<br>
+                                    <small class="text-muted">@timeAgoText</small>
+                                </td>
+                                <td><strong class="text-primary">@expense.Amount.ToString("N0")₫</strong></td>
+                                <td>
+                                    <strong>@expense.UserShare.ToString("N0")₫</strong><br>
+                                    <small class="text-muted">(@userSharePercentage.ToString("F0")%)</small>
+                                </td>
+                                <td><span class="badge @statusBadge.Item1">@statusBadge.Item2</span></td>
+                                <td>
+                                    @if (expense.ApprovedByUser != null)
+                                    {
+                                        var initials = expense.ApprovedByUser.FullName?.Split(' ').Select(n => n[0]).Take(2).Aggregate("", (a, b) => a + b).ToUpper() ?? "U";
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-xs bg-primary text-white me-1">@initials</div>
+                                            <small>@expense.ApprovedByUser.FullName</small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">Chưa duyệt</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (expense.Status == ExpenseStatus.Pending && (Model.IsAdmin() || Model.IsStaff()))
+                                    {
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-success" title="Duyệt">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                            <button class="btn btn-danger" title="Từ chối">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" asp-page="/Expenses/Details" asp-route-id="@expense.ExpenseId"><i class="bi bi-eye me-2"></i>Chi tiết</a></li>
+                                                @if (!string.IsNullOrEmpty(expense.ReceiptPath))
+                                                {
+                                                    <li><a class="dropdown-item" href="@expense.ReceiptPath" target="_blank"><i class="bi bi-file-earmark me-2"></i>Xem hóa đơn</a></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    Không có chi phí nào
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.Expenses.Count >= 50)
+    {
+        <div class="card-footer bg-transparent">
+            <div class="alert alert-info mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Hiển thị 50 bản ghi gần nhất. Sử dụng bộ lọc để tìm kiếm cụ thể hơn.
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Add Expense Modal -->
+<div class="modal fade" id="addExpenseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle text-primary me-2"></i>Thêm chi phí mới
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Chọn xe <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn xe --</option>
+                                <option>Tesla Model 3 - 30A-12345</option>
+                                <option>Toyota Prius - 30B-67890</option>
+                                <option>Honda Civic - 30C-11111</option>
+                                <option>VinFast VF8 - 30D-22222</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Danh mục chi phí <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option>Phí sạc điện</option>
+                                <option>Bảo dưỡng định kỳ</option>
+                                <option>Bảo hiểm xe</option>
+                                <option>Đăng kiểm</option>
+                                <option>Vệ sinh xe</option>
+                                <option>Sửa chữa</option>
+                                <option>Nhiên liệu</option>
+                                <option>Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Tiêu đề chi phí <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" placeholder="VD: Phí sạc điện tháng 10" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số tiền <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" placeholder="500000" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày chi <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà cung cấp</label>
+                            <input type="text" class="form-control" placeholder="Tên nhà cung cấp">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phương thức chia</label>
+                            <select class="form-select">
+                                <option>Theo tỷ lệ sở hữu</option>
+                                <option>Theo mức độ sử dụng</option>
+                                <option>Chia đều</option>
+                                <option>Tùy chỉnh</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Hóa đơn / Biên lai</label>
+                            <input type="file" class="form-control" accept="image/*,.pdf">
+                            <small class="text-muted">Hỗ trợ: JPG, PNG, PDF (Max 5MB)</small>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" rows="3" placeholder="Mô tả chi tiết về chi phí..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-2"></i>Thêm chi phí
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

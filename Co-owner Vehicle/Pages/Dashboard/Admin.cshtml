@@ -1,0 +1,329 @@
+@page
+@model Co_owner_Vehicle.Pages.Dashboard.AdminModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-speedometer2 text-primary me-2"></i>Admin Dashboard
+        </h2>
+        <p class="text-muted mb-0">Tổng quan hệ thống và quản lý</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-secondary me-2">
+            <i class="bi bi-download me-2"></i>Xuất báo cáo
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Thao tác nhanh
+        </button>
+    </div>
+</div>
+
+<!-- Admin Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon primary">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.TotalUsers</div>
+            <div class="stat-card-label">Tổng người dùng</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-arrow-up"></i> +@Model.Stats.NewUsersThisMonth tháng này
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="bi bi-car-front"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.TotalVehicles</div>
+            <div class="stat-card-label">Tổng xe quản lý</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-arrow-up"></i> +@Model.Stats.NewVehiclesThisMonth xe mới
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.BookingsThisMonth</div>
+            <div class="stat-card-label">Lượt đặt lịch/tháng</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-info-circle"></i> Tổng: @Model.Stats.TotalBookings
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="stat-card-value">@($"{Model.Stats.TotalRevenue / 1000000:N1}M")</div>
+            <div class="stat-card-label">Doanh thu tháng (VNĐ)</div>
+            <div class="stat-card-change @(Model.Stats.TotalRevenue > 0 ? "positive" : "negative")">
+                <i class="bi bi-@(Model.Stats.TotalRevenue > 0 ? "arrow-up" : "dash")"></i> @($"{Model.Stats.TotalRevenue:N0}")₫
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Main Column -->
+    <div class="col-lg-8">
+        <!-- Recent Activities -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-activity me-2"></i>Hoạt động gần đây</span>
+                <a href="#" class="text-primary text-decoration-none fs-7">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentActivities.Any())
+                {
+                    <div class="activity-timeline">
+                        @foreach (var activity in Model.RecentActivities)
+                        {
+                            <div class="activity-item">
+                                <div class="activity-icon @activity.BgClass">
+                                    <i class="@activity.IconClass"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="mb-1"><strong>@activity.Title</strong></p>
+                                    <small class="text-muted">@activity.Description</small><br>
+                                    <small class="text-muted">@activity.TimeAgo</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-activity fs-1 d-block mb-2"></i>
+                        <p>Chưa có hoạt động nào</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- System Stats Chart -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-bar-chart me-2"></i>Thống kê hệ thống
+            </div>
+            <div class="card-body">
+                <canvas id="systemStatsChart" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="col-lg-4">
+        <!-- Pending Actions -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">
+                <i class="bi bi-exclamation-triangle me-2"></i>Cần xử lý
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                    <div>
+                        <p class="mb-0 fw-semibold">Lịch chờ duyệt</p>
+                        <small class="text-muted">Bookings pending</small>
+                    </div>
+                    <h3 class="mb-0 text-warning">@Model.Pending.PendingBookings</h3>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                    <div>
+                        <p class="mb-0 fw-semibold">Chi phí chờ duyệt</p>
+                        <small class="text-muted">Expenses pending</small>
+                    </div>
+                    <h3 class="mb-0 text-warning">@Model.Pending.PendingExpenses</h3>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                    <div>
+                        <p class="mb-0 fw-semibold">User chờ xác thực</p>
+                        <small class="text-muted">Verification pending</small>
+                    </div>
+                    <h3 class="mb-0 text-warning">@Model.Pending.UnverifiedUsers</h3>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-0 fw-semibold">Yêu cầu xác thực</p>
+                        <small class="text-muted">Verification requests</small>
+                    </div>
+                    <h3 class="mb-0 text-danger">@Model.Pending.PendingVerifications</h3>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                @if (Model.Pending.PendingBookings > 0 || Model.Pending.PendingExpenses > 0 || Model.Pending.UnverifiedUsers > 0)
+                {
+                    <a asp-page="/Bookings/Index" class="btn btn-warning w-100">
+                        <i class="bi bi-check-all me-2"></i>Xử lý tất cả
+                    </a>
+                }
+                else
+                {
+                    <button class="btn btn-success w-100" disabled>
+                        <i class="bi bi-check-circle me-2"></i>Không có gì cần xử lý
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-lightning-charge me-2"></i>Thao tác nhanh
+            </div>
+            <div class="card-body d-grid gap-2">
+                <a asp-page="/Account/Register" class="btn btn-outline-primary text-start">
+                    <i class="bi bi-person-plus me-2"></i>Thêm người dùng
+                </a>
+                <a asp-page="/Vehicles/Create" class="btn btn-outline-success text-start">
+                    <i class="bi bi-car-front-fill me-2"></i>Thêm xe mới
+                </a>
+                <a asp-page="/Groups/Create" class="btn btn-outline-warning text-start">
+                    <i class="bi bi-people me-2"></i>Tạo nhóm mới
+                </a>
+                <a asp-page="/Settings/Index" class="btn btn-outline-info text-start">
+                    <i class="bi bi-gear me-2"></i>Cài đặt hệ thống
+                </a>
+            </div>
+        </div>
+
+        <!-- System Health -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-heart-pulse me-2"></i>Tình trạng hệ thống
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Database</span>
+                        <span class="badge bg-success">Tốt</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 95%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>API Response</span>
+                        <span class="badge bg-success">Tốt</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 98%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Server Load</span>
+                        <span class="badge bg-warning">Trung bình</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .activity-timeline {
+        position: relative;
+    }
+    
+    .activity-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .activity-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 45px;
+        width: 2px;
+        height: calc(100% - 20px);
+        background: var(--gray-200);
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+        z-index: 1;
+    }
+    
+    .activity-content {
+        flex: 1;
+        padding-top: 0.25rem;
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // System Stats Chart
+        const ctx = document.getElementById('systemStatsChart')?.getContext('2d');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Users', 'Vehicles', 'Bookings', 'Groups'],
+                    datasets: [{
+                        label: 'Tháng này',
+                        data: [
+                            @Model.Stats.NewUsersThisMonth,
+                            @Model.Stats.NewVehiclesThisMonth,
+                            @Model.Stats.BookingsThisMonth,
+                            @Model.Stats.ActiveGroups
+                        ],
+                        backgroundColor: '#4F46E5',
+                    }, {
+                        label: 'Tổng',
+                        data: [
+                            @Model.Stats.TotalUsers,
+                            @Model.Stats.TotalVehicles,
+                            @Model.Stats.TotalBookings,
+                            @Model.Stats.TotalGroups
+                        ],
+                        backgroundColor: '#E5E7EB',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}
+

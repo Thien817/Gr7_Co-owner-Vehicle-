@@ -1,0 +1,347 @@
+@page
+@model Co_owner_Vehicle.Pages.CheckInOut.IndexModel
+@{
+    ViewData["Title"] = "Check-in/Check-out";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-box-arrow-in-right text-primary me-2"></i>Check-in / Check-out
+        </h2>
+        <p class="text-muted mb-0">Quản lý quá trình nhận và trả xe</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qrScannerModal">
+        <i class="bi bi-qr-code-scan me-2"></i>Quét QR Code
+    </button>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Đang sử dụng</h6>
+                        <h3 class="fw-bold mb-0">@Model.Stats.CurrentlyInUse</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="bi bi-car-front"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Đã check-in hôm nay</h6>
+                        <h3 class="fw-bold mb-0">@Model.Stats.CheckInsToday</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Đã check-out hôm nay</h6>
+                        <h3 class="fw-bold mb-0">@Model.Stats.CheckOutsToday</h3>
+                    </div>
+                    <div class="stat-icon bg-info">
+                        <i class="bi bi-box-arrow-left"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-2">Tổng lượt tháng này</h6>
+                        <h3 class="fw-bold mb-0">@Model.Stats.TotalThisMonth</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small">Chọn xe</label>
+                    <select class="form-select" name="vehicleIdFilter" asp-for="VehicleIdFilter">
+                        <option value="">Tất cả xe</option>
+                        @foreach (var vehicle in Model.Vehicles)
+                        {
+                            <option value="@vehicle.VehicleId">@vehicle.Brand @vehicle.Model - @vehicle.LicensePlate</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">Loại</label>
+                    <select class="form-select" name="typeFilter" asp-for="TypeFilter">
+                        <option value="">Tất cả</option>
+                        <option value="@CheckInOutType.CheckIn">Check-in</option>
+                        <option value="@CheckInOutType.CheckOut">Check-out</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Từ ngày</label>
+                    <input type="date" class="form-control" name="fromDate" asp-for="FromDate">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Đến ngày</label>
+                    <input type="date" class="form-control" name="toDate" asp-for="ToDate">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i>Lọc
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Records List -->
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0">
+            <i class="bi bi-list-ul me-2"></i>Lịch sử Check-in/Check-out
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Loại</th>
+                        <th>Thành viên</th>
+                        <th>Xe</th>
+                        <th>Số km</th>
+                        <th>Trạng thái xe</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Records.Any())
+                    {
+                        @foreach (var record in Model.Records)
+                        {
+                            var typeBadge = record.Type switch
+                            {
+                                CheckInOutType.CheckIn => ("bg-success", "Check-in"),
+                                CheckInOutType.CheckOut => ("bg-primary", "Check-out"),
+                                _ => ("bg-secondary", record.Type.ToString())
+                            };
+
+                            var statusBadge = record.Status switch
+                            {
+                                CheckInOutStatus.Pending => ("bg-warning", "Chờ xử lý"),
+                                CheckInOutStatus.Completed => ("bg-success", "Hoàn thành"),
+                                CheckInOutStatus.Failed => ("bg-danger", "Thất bại"),
+                                _ => ("bg-secondary", record.Status.ToString())
+                            };
+
+                            var conditionBadge = record.VehicleCondition switch
+                            {
+                                "Tốt" => ("bg-success", "Tốt"),
+                                "Có vấn đề nhỏ" => ("bg-warning", "Có vấn đề nhỏ"),
+                                "Có vấn đề lớn" => ("bg-danger", "Có vấn đề lớn"),
+                                _ => ("bg-secondary", record.VehicleCondition ?? "Chưa đánh giá")
+                            };
+
+                            var userInitials = record.User.FullName?.Split(' ').Select(n => n[0]).Take(2).Aggregate("", (a, b) => a + b).ToUpper() ?? "U";
+
+                            <tr>
+                                <td>
+                                    <strong>@record.CheckTime.ToString("dd/MM/yyyy")</strong><br>
+                                    <small class="text-muted">@record.CheckTime.ToString("HH:mm")</small>
+                                </td>
+                                <td><span class="badge @typeBadge.Item1">@typeBadge.Item2</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-xs bg-primary text-white me-2">@userInitials</div>
+                                        @record.User.FullName
+                                    </div>
+                                </td>
+                                <td>@record.Vehicle.Brand @record.Vehicle.Model</td>
+                                <td>
+                                    @if (record.Mileage.HasValue)
+                                    {
+                                        <strong>@record.Mileage.Value.ToString("#,##0") km</strong>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td><span class="badge @conditionBadge.Item1">@conditionBadge.Item2</span></td>
+                                <td>@record.Notes</td>
+                                <td>
+                                    <a asp-page="/CheckInOut/Details" asp-route-id="@record.CheckInOutRecordId" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    Không có dữ liệu check-in/check-out
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.Records.Count >= 50)
+        {
+            <div class="alert alert-info mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Hiển thị 50 bản ghi gần nhất. Sử dụng bộ lọc để tìm kiếm cụ thể hơn.
+            </div>
+        }
+    </div>
+</div>
+
+<!-- QR Scanner Modal -->
+<div class="modal fade" id="qrScannerModal" tabindex="-1" aria-labelledby="qrScannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrScannerModalLabel">
+                    <i class="bi bi-qr-code-scan me-2"></i>Quét QR Code
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Hoặc nhập QR data trực tiếp</label>
+                            <textarea class="form-control" id="manualQRInput" rows="3" placeholder="Dán QR code data vào đây..."></textarea>
+                        </div>
+                        <div id="qrScanResult" class="alert" style="display: none;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Thông tin bổ sung</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Số km hiện tại</label>
+                                    <input type="number" class="form-control" id="scanMileage" placeholder="Nhập số km">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tình trạng xe</label>
+                                    <select class="form-select" id="scanCondition">
+                                        <option value="">-- Chọn --</option>
+                                        <option value="Tốt">Tốt</option>
+                                        <option value="Có vấn đề nhỏ">Có vấn đề nhỏ</option>
+                                        <option value="Có vấn đề lớn">Có vấn đề lớn</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ghi chú</label>
+                                    <textarea class="form-control" id="scanNotes" rows="2" placeholder="Ghi chú thêm..."></textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100" onclick="processQRCode()">
+                                    <i class="bi bi-check-lg me-2"></i>Hoàn tất
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function processQRCode() {
+            const qrData = document.getElementById('manualQRInput').value;
+            if (!qrData) {
+                showMessage('Vui lòng nhập QR code data', 'danger');
+                return;
+            }
+
+            const mileage = document.getElementById('scanMileage').value;
+            const condition = document.getElementById('scanCondition').value;
+            const notes = document.getElementById('scanNotes').value;
+
+            try {
+                const response = await fetch('/api/qrcode/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        qrData: qrData,
+                        mileage: mileage ? parseInt(mileage) : null,
+                        vehicleCondition: condition || null,
+                        notes: notes || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('Check-in/Check-out thành công!', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showMessage(data.message || 'Có lỗi xảy ra', 'danger');
+                }
+            } catch (error) {
+                showMessage('Lỗi kết nối: ' + error.message, 'danger');
+            }
+        }
+
+        function showMessage(message, type) {
+            const resultDiv = document.getElementById('qrScanResult');
+            resultDiv.className = `alert alert-${type}`;
+            resultDiv.textContent = message;
+            resultDiv.style.display = 'block';
+        }
+
+        // Clear form when modal is closed
+        document.getElementById('qrScannerModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('manualQRInput').value = '';
+            document.getElementById('scanMileage').value = '';
+            document.getElementById('scanCondition').value = '';
+            document.getElementById('scanNotes').value = '';
+            document.getElementById('qrScanResult').style.display = 'none';
+        });
+    </script>
+}

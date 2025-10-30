@@ -1,0 +1,170 @@
+@page
+@model Co_owner_Vehicle.Pages.Vehicles.EditModel
+@{
+    ViewData["Title"] = "Chỉnh sửa xe";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Vehicles/Index">Xe</a></li>
+                <li class="breadcrumb-item"><a asp-page="/Vehicles/Details">Chi tiết</a></li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-pencil-square text-primary me-2"></i>Chỉnh sửa xe
+        </h2>
+        <p class="text-muted mb-0">Cập nhật thông tin xe</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column - Form -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-car-front me-2"></i>Thông tin xe
+                </h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Hãng xe <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="Tesla" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Model <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="Model 3" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Biển số xe <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="30A-12345" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Loại xe <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="1" selected>Xe điện</option>
+                                <option value="2">Hybrid</option>
+                                <option value="3">Xăng</option>
+                                <option value="4">Xe máy</option>
+                                <option value="5">Xe đạp điện</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Năm sản xuất</label>
+                            <input type="number" class="form-control" value="2023" min="1900" max="@DateTime.Now.Year">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Màu sắc</label>
+                            <input type="text" class="form-control" value="Đen">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số VIN</label>
+                            <input type="text" class="form-control" value="5YJ3E1EA1KF123456" maxlength="17">
+                            <small class="text-muted">Vehicle Identification Number</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số máy</label>
+                            <input type="text" class="form-control" value="ENG123456">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giá mua</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="1200000000">
+                                <span class="input-group-text">đ</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày mua</label>
+                            <input type="date" class="form-control" value="2023-01-15">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số km hiện tại</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="15000">
+                                <span class="input-group-text">km</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                            <select class="form-select" required>
+                                <option value="1" selected>Hoạt động</option>
+                                <option value="2">Bảo dưỡng</option>
+                                <option value="3">Sửa chữa</option>
+                                <option value="4">Không hoạt động</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Hình ảnh xe</label>
+                            <input type="file" class="form-control" accept="image/*" multiple>
+                            <small class="text-muted">Có thể upload nhiều ảnh (Max 5MB mỗi ảnh)</small>
+                            <div class="mt-2">
+                                <img src="https://via.placeholder.com/200x150" class="img-thumbnail me-2" style="width: 150px;">
+                                <img src="https://via.placeholder.com/200x150" class="img-thumbnail" style="width: 150px;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" rows="4">Xe điện Tesla Model 3, màu đen, đã sử dụng 15,000 km. Tình trạng tốt.</textarea>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="/Vehicles/Details" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-2"></i>Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Info Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Lưu ý
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Chú ý:</strong> Việc thay đổi thông tin xe có thể ảnh hưởng đến các nhóm đồng sở hữu và lịch sử sử dụng.
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>Thao tác nhanh
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-page="/Vehicles/Details" class="btn btn-outline-primary">
+                        <i class="bi bi-eye me-2"></i>Xem chi tiết
+                    </a>
+                    <a asp-page="/Groups/Index" class="btn btn-outline-info">
+                        <i class="bi bi-people me-2"></i>Quản lý nhóm
+                    </a>
+                    <a asp-page="/Bookings/Calendar" class="btn btn-outline-success">
+                        <i class="bi bi-calendar-check me-2"></i>Xem lịch đặt
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

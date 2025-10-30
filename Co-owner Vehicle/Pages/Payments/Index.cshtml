@@ -1,0 +1,486 @@
+@page
+@model Co_owner_Vehicle.Pages.Payments.IndexModel
+@{
+    ViewData["Title"] = "Lịch sử thanh toán";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-credit-card text-primary me-2"></i>Lịch sử thanh toán
+        </h2>
+        <p class="text-muted mb-0">Theo dõi các khoản thanh toán và công nợ</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">
+        <i class="bi bi-credit-card me-2"></i>Thanh toán ngay
+    </button>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-card-value">8.5M</div>
+            <div class="stat-card-label">Đã thanh toán</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-arrow-up"></i> Tháng này
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <div class="stat-card-value">2.4M</div>
+            <div class="stat-card-label">Công nợ chưa trả</div>
+            <div class="stat-card-change negative">
+                <i class="bi bi-clock-history"></i> 3 khoản
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+            <div class="stat-card-value" data-value="5">0</div>
+            <div class="stat-card-label">Đang xử lý</div>
+            <div class="stat-card-change">
+                Chờ xác nhận
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon primary">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="stat-card-value" data-value="24">0</div>
+            <div class="stat-card-label">Tổng giao dịch</div>
+            <div class="stat-card-change">
+                Tất cả thời gian
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Outstanding Payments Alert -->
+<div class="alert alert-warning d-flex align-items-center mb-4">
+    <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+    <div class="flex-grow-1">
+        <strong>Bạn có 3 khoản công nợ chưa thanh toán!</strong><br>
+        <small>Tổng: 2,400,000₫ - Hạn cuối: 31/10/2024</small>
+    </div>
+    <button class="btn btn-warning">
+        <i class="bi bi-credit-card me-2"></i>Thanh toán ngay
+    </button>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">Trạng thái</label>
+                <select class="form-select">
+                    <option selected>Tất cả</option>
+                    <option>Đã thanh toán</option>
+                    <option>Chờ thanh toán</option>
+                    <option>Đang xử lý</option>
+                    <option>Thất bại</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Phương thức</label>
+                <select class="form-select">
+                    <option selected>Tất cả</option>
+                    <option>Chuyển khoản</option>
+                    <option>MoMo</option>
+                    <option>ZaloPay</option>
+                    <option>VNPay</option>
+                    <option>Tiền mặt</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Thời gian</label>
+                <select class="form-select">
+                    <option selected>Tháng này</option>
+                    <option>Tháng trước</option>
+                    <option>3 tháng</option>
+                    <option>Tất cả</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search me-2"></i>Lọc
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payments Table -->
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-list-ul me-2"></i>Danh sách giao dịch
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Mã GD</th>
+                        <th>Nội dung</th>
+                        <th>Ngày</th>
+                        <th>Số tiền</th>
+                        <th>Phương thức</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Payment 1 - Success -->
+                    <tr>
+                        <td>
+                            <strong class="text-primary">#PAY00124</strong><br>
+                            <small class="text-muted">Ref: VNP123456</small>
+                        </td>
+                        <td>
+                            <strong>Phí sạc điện</strong><br>
+                            <small class="text-muted">Tesla Model 3 - Tháng 10</small>
+                        </td>
+                        <td>
+                            25/10/2024<br>
+                            <small class="text-muted">14:30</small>
+                        </td>
+                        <td>
+                            <strong class="text-success">200,000₫</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-wallet2 text-primary"></i>
+                                <span>VNPay</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Thành công
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-receipt"></i> Biên lai
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Payment 2 - Pending -->
+                    <tr class="table-warning">
+                        <td>
+                            <strong class="text-warning">#PAY00125</strong><br>
+                            <small class="text-muted">Chưa có ref</small>
+                        </td>
+                        <td>
+                            <strong>Bảo dưỡng định kỳ</strong><br>
+                            <small class="text-muted">VinFast VF8 - 15,000km</small>
+                        </td>
+                        <td>
+                            27/10/2024<br>
+                            <small class="text-muted">09:15</small>
+                        </td>
+                        <td>
+                            <strong class="text-warning">1,400,000₫</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-phone text-danger"></i>
+                                <span>MoMo</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-warning">
+                                <i class="bi bi-clock-history me-1"></i>Đang xử lý
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-info-circle"></i> Chi tiết
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Payment 3 - Outstanding -->
+                    <tr class="table-danger">
+                        <td>
+                            <strong class="text-danger">#PAY00126</strong><br>
+                            <small class="text-muted">Chưa thanh toán</small>
+                        </td>
+                        <td>
+                            <strong>Rửa xe ngoại thất</strong><br>
+                            <small class="text-muted">Tesla Model 3</small>
+                        </td>
+                        <td>
+                            <span class="text-danger">Hạn: 31/10/2024</span><br>
+                            <small class="text-muted">Còn 2 ngày</small>
+                        </td>
+                        <td>
+                            <strong class="text-danger">120,000₫</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-dash-circle text-muted"></i>
+                                <span class="text-muted">Chưa chọn</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-danger">
+                                <i class="bi bi-exclamation-circle me-1"></i>Chưa trả
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-danger">
+                                <i class="bi bi-credit-card me-1"></i>Thanh toán
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Payment 4 - Success -->
+                    <tr>
+                        <td>
+                            <strong class="text-primary">#PAY00123</strong><br>
+                            <small class="text-muted">Ref: ZALO789456</small>
+                        </td>
+                        <td>
+                            <strong>Bảo hiểm xe</strong><br>
+                            <small class="text-muted">Honda Civic - Quý 4</small>
+                        </td>
+                        <td>
+                            15/10/2024<br>
+                            <small class="text-muted">10:20</small>
+                        </td>
+                        <td>
+                            <strong class="text-success">3,000,000₫</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-phone text-info"></i>
+                                <span>ZaloPay</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Thành công
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-receipt"></i> Biên lai
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Payment 5 - Success -->
+                    <tr>
+                        <td>
+                            <strong class="text-primary">#PAY00122</strong><br>
+                            <small class="text-muted">Ref: BANK456123</small>
+                        </td>
+                        <td>
+                            <strong>Phí sạc điện</strong><br>
+                            <small class="text-muted">VinFast VF8 - Tháng 9</small>
+                        </td>
+                        <td>
+                            08/10/2024<br>
+                            <small class="text-muted">16:45</small>
+                        </td>
+                        <td>
+                            <strong class="text-success">280,000₫</strong>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-bank text-success"></i>
+                                <span>Chuyển khoản</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Thành công
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-receipt"></i> Biên lai
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-transparent">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Hiển thị 1-5 trong 24 giao dịch</small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">Trước</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-credit-card me-2"></i>Thanh toán
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Outstanding Bills -->
+                <div class="alert alert-info mb-4">
+                    <strong><i class="bi bi-info-circle me-2"></i>Công nợ hiện tại</strong>
+                    <div class="mt-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" value="" id="debt1" checked>
+                            <label class="form-check-label d-flex justify-content-between flex-grow-1" for="debt1">
+                                <span>Rửa xe - Tesla Model 3</span>
+                                <strong class="text-danger">120,000₫</strong>
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" value="" id="debt2" checked>
+                            <label class="form-check-label d-flex justify-content-between flex-grow-1" for="debt2">
+                                <span>Bảo dưỡng - VinFast VF8</span>
+                                <strong class="text-danger">1,400,000₫</strong>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="debt3" checked>
+                            <label class="form-check-label d-flex justify-content-between flex-grow-1" for="debt3">
+                                <span>Phí đỗ xe - Toyota Prius</span>
+                                <strong class="text-danger">880,000₫</strong>
+                            </label>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <strong>Tổng thanh toán:</strong>
+                            <strong class="text-danger fs-5">2,400,000₫</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <h6 class="mb-3">Chọn phương thức thanh toán</h6>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="payment-method-card active">
+                            <input type="radio" name="paymentMethod" id="vnpay" checked hidden>
+                            <label for="vnpay" class="w-100">
+                                <i class="bi bi-wallet2 fs-2 text-primary mb-2"></i>
+                                <div class="fw-semibold">VNPay</div>
+                                <small class="text-muted">Thanh toán online</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="payment-method-card">
+                            <input type="radio" name="paymentMethod" id="momo" hidden>
+                            <label for="momo" class="w-100">
+                                <i class="bi bi-phone fs-2 text-danger mb-2"></i>
+                                <div class="fw-semibold">MoMo</div>
+                                <small class="text-muted">Ví điện tử MoMo</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="payment-method-card">
+                            <input type="radio" name="paymentMethod" id="zalopay" hidden>
+                            <label for="zalopay" class="w-100">
+                                <i class="bi bi-phone fs-2 text-info mb-2"></i>
+                                <div class="fw-semibold">ZaloPay</div>
+                                <small class="text-muted">Ví điện tử ZaloPay</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="payment-method-card">
+                            <input type="radio" name="paymentMethod" id="bank" hidden>
+                            <label for="bank" class="w-100">
+                                <i class="bi bi-bank fs-2 text-success mb-2"></i>
+                                <div class="fw-semibold">Chuyển khoản</div>
+                                <small class="text-muted">Ngân hàng</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-credit-card me-2"></i>Thanh toán 2,400,000₫
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-method-card {
+        border: 2px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .payment-method-card:hover {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.05);
+    }
+    
+    .payment-method-card.active {
+        border-color: var(--primary);
+        background: rgba(79, 70, 229, 0.1);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+    
+    .payment-method-card label {
+        margin: 0;
+        cursor: pointer;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Payment method selection
+        document.querySelectorAll('.payment-method-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+    </script>
+}
+

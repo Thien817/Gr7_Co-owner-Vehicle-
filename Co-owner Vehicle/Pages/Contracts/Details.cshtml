@@ -1,0 +1,248 @@
+@page
+@model Co_owner_Vehicle.Pages.Contracts.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết hợp đồng";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-page="/Contracts/Index">Hợp đồng</a></li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-file-earmark-text text-primary me-2"></i>Chi tiết hợp đồng
+        </h2>
+        <p class="text-muted mb-0">Xem và quản lý hợp đồng đồng sở hữu</p>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary">
+            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+        </button>
+        <button class="btn btn-primary">
+            <i class="bi bi-download me-2"></i>Tải PDF
+        </button>
+    </div>
+</div>
+
+<!-- Contract Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-8">
+                <h4 class="fw-bold mb-3">Hợp đồng đồng sở hữu Tesla Model 3</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Mã hợp đồng</label>
+                        <p class="fw-bold mb-0 font-monospace">CONTRACT-2024-001</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Nhóm</label>
+                        <p class="mb-0">Nhóm Tesla Model 3</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Ngày tạo</label>
+                        <p class="mb-0">01/09/2024</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Ngày hết hạn</label>
+                        <p class="mb-0">01/09/2025</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Trạng thái</label>
+                        <p class="mb-0"><span class="badge bg-success fs-6">Đã ký</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Thành viên đã ký</label>
+                        <p class="mb-0"><span class="badge bg-success">4/4</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-file-earmark-pdf fs-1 text-danger"></i>
+                        </div>
+                        <h6 class="mb-3">Hợp đồng PDF</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary">
+                                <i class="bi bi-eye me-2"></i>Xem PDF
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="bi bi-download me-2"></i>Tải về
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contract Content -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h6 class="mb-0">
+            <i class="bi bi-file-text me-2"></i>Nội dung hợp đồng
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="contract-content">
+            <h5 class="mb-4 text-center">HỢP ĐỒNG ĐỒNG SỞ HỮU XE</h5>
+            
+            <p class="mb-3"><strong>Điều 1: Đối tượng hợp đồng</strong></p>
+            <p class="mb-3">
+                Hợp đồng này được ký kết giữa các bên sau đây về việc đồng sở hữu xe Tesla Model 3, 
+                biển số 30A-12345.
+            </p>
+
+            <p class="mb-3"><strong>Điều 2: Tỷ lệ sở hữu</strong></p>
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Thành viên</th>
+                            <th>Tỷ lệ sở hữu</th>
+                            <th>Ngày ký</th>
+                            <th>Chữ ký</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nguyễn Văn A</td>
+                            <td>30%</td>
+                            <td>01/09/2024</td>
+                            <td><span class="badge bg-success">Đã ký</span></td>
+                        </tr>
+                        <tr>
+                            <td>Lê Thị B</td>
+                            <td>30%</td>
+                            <td>02/09/2024</td>
+                            <td><span class="badge bg-success">Đã ký</span></td>
+                        </tr>
+                        <tr>
+                            <td>Trần Văn C</td>
+                            <td>25%</td>
+                            <td>03/09/2024</td>
+                            <td><span class="badge bg-success">Đã ký</span></td>
+                        </tr>
+                        <tr>
+                            <td>Phạm Văn D</td>
+                            <td>15%</td>
+                            <td>04/09/2024</td>
+                            <td><span class="badge bg-success">Đã ký</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="mb-3"><strong>Điều 3: Quyền và nghĩa vụ</strong></p>
+            <p class="mb-3">
+                Các bên có quyền và nghĩa vụ sử dụng, bảo dưỡng, và chia sẻ chi phí vận hành xe 
+                theo tỷ lệ sở hữu đã thỏa thuận.
+            </p>
+
+            <p class="mb-3"><strong>Điều 4: Quản lý và quyết định</strong></p>
+            <p class="mb-3">
+                Các quyết định quan trọng về xe sẽ được thực hiện thông qua hệ thống voting 
+                với đa số thành viên đồng ý.
+            </p>
+
+            <p class="mb-3"><strong>Điều 5: Thời hạn hợp đồng</strong></p>
+            <p class="mb-3">
+                Hợp đồng có hiệu lực từ ngày 01/09/2024 đến ngày 01/09/2025 và có thể được gia hạn 
+                theo thỏa thuận của các bên.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Signature Status -->
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0">
+            <i class="bi bi-pen me-2"></i>Trạng thái ký kết
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-primary text-white me-3">NV</div>
+                            <div>
+                                <strong>Nguyễn Văn A</strong><br>
+                                <small class="text-muted">30% sở hữu</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-success">Đã ký</span>
+                    </div>
+                    <small class="text-muted">Ngày ký: 01/09/2024</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-success text-white me-3">LT</div>
+                            <div>
+                                <strong>Lê Thị B</strong><br>
+                                <small class="text-muted">30% sở hữu</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-success">Đã ký</span>
+                    </div>
+                    <small class="text-muted">Ngày ký: 02/09/2024</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-warning text-white me-3">TT</div>
+                            <div>
+                                <strong>Trần Văn C</strong><br>
+                                <small class="text-muted">25% sở hữu</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-success">Đã ký</span>
+                    </div>
+                    <small class="text-muted">Ngày ký: 03/09/2024</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-info text-white me-3">PH</div>
+                            <div>
+                                <strong>Phạm Văn D</strong><br>
+                                <small class="text-muted">15% sở hữu</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-success">Đã ký</span>
+                    </div>
+                    <small class="text-muted">Ngày ký: 04/09/2024</small>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <button class="btn btn-primary btn-lg">
+                <i class="bi bi-pen me-2"></i>Ký hợp đồng
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .contract-content {
+        font-family: 'Times New Roman', serif;
+        line-height: 1.8;
+    }
+</style>
+

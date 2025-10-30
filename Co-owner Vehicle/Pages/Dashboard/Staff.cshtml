@@ -1,0 +1,378 @@
+@page
+@model Co_owner_Vehicle.Pages.Dashboard.StaffModel
+@{
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-speedometer2 text-success me-2"></i>Staff Dashboard
+        </h2>
+        <p class="text-muted mb-0">Xin chào, <strong>@Model.GetCurrentUserFullName()</strong>! Đây là tổng quan công việc hôm nay.</p>
+    </div>
+    <div>
+        <a asp-page="/CheckInOut/Index" class="btn btn-success">
+            <i class="bi bi-qr-code me-2"></i>Quét QR Check-in
+        </a>
+    </div>
+</div>
+
+<!-- Today Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon warning">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.PendingBookings</div>
+            <div class="stat-card-label">Lịch chờ duyệt</div>
+            <div class="stat-card-change @(Model.Stats.PendingBookings > 0 ? "negative" : "positive")">
+                <i class="bi bi-@(Model.Stats.PendingBookings > 0 ? "exclamation" : "check")-circle"></i> 
+                @(Model.Stats.PendingBookings > 0 ? "Cần xử lý" : "Không có")
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon primary">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.TodayBookings</div>
+            <div class="stat-card-label">Lịch hôm nay</div>
+            <div class="stat-card-change positive">
+                <i class="bi bi-check-circle"></i> @Model.Stats.CompletedTodayBookings đã hoàn thành
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="bi bi-box-arrow-in-right"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.TodayCheckIns</div>
+            <div class="stat-card-label">Check-in hôm nay</div>
+            <div class="stat-card-change">
+                <i class="bi bi-info-circle"></i> @Model.Stats.TodayCheckOuts check-out
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="bi bi-tools"></i>
+            </div>
+            <div class="stat-card-value">@Model.Stats.VehiclesNeedingMaintenance</div>
+            <div class="stat-card-label">Xe cần bảo trì</div>
+            <div class="stat-card-change @(Model.Stats.VehiclesNeedingMaintenance > 0 ? "negative" : "positive")">
+                <i class="bi bi-@(Model.Stats.VehiclesNeedingMaintenance > 0 ? "exclamation-triangle" : "check-circle")"></i> 
+                @(Model.Stats.VehiclesNeedingMaintenance > 0 ? "Khẩn cấp" : "OK")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Pending Approvals -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">
+                <i class="bi bi-clock-history me-2"></i>Lịch đặt chờ duyệt
+            </div>
+            <div class="card-body p-0">
+                @if (Model.PendingBookings.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Người đặt</th>
+                                    <th>Xe</th>
+                                    <th>Thời gian</th>
+                                    <th>Mục đích</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in Model.PendingBookings)
+                                {
+                                    var userInitials = string.Join("", (booking.User?.FullName ?? "").Split(' ').Select(n => n.Length > 0 ? n[0].ToString() : "").Take(2));
+                                    
+                                    <tr>
+                                        <td>
+                                            <img src="https://ui-avatars.com/api/?name=@userInitials&background=4F46E5&color=fff" 
+                                                 class="rounded-circle me-2" width="32" height="32">
+                                            <strong>@booking.User?.FullName</strong>
+                                        </td>
+                                        <td>
+                                            <strong>@booking.Vehicle?.Brand @booking.Vehicle?.Model</strong><br>
+                                            <small class="text-muted">@booking.Vehicle?.LicensePlate</small>
+                                        </td>
+                                        <td>
+                                            @booking.StartTime.ToString("dd/MM HH:mm")<br>
+                                            <small class="text-muted">→ @booking.EndTime.ToString("dd/MM HH:mm")</small>
+                                        </td>
+                                        <td>@booking.Purpose</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <form method="post" asp-page="/Bookings/Details" asp-page-handler="Confirm" asp-route-id="@booking.BookingScheduleId" class="d-inline">
+                                                    <button type="submit" class="btn btn-success">
+                                                        <i class="bi bi-check-lg"></i> Duyệt
+                                                    </button>
+                                                </form>
+                                                <button class="btn btn-danger" onclick="rejectBooking(@booking.BookingScheduleId)">
+                                                    <i class="bi bi-x-lg"></i> Từ chối
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-check-circle fs-1 d-block mb-2 text-success"></i>
+                        <p>Không có lịch đặt nào chờ duyệt</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Today's Schedule -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar-day me-2"></i>Lịch hôm nay (@DateTime.UtcNow.ToString("dd/MM/yyyy"))</span>
+                <span class="badge bg-primary">@Model.Stats.TodayBookings lịch</span>
+            </div>
+            <div class="card-body">
+                @{
+                    var scheduleItems = Model.GetTodayScheduleItems();
+                }
+                @if (scheduleItems.Any())
+                {
+                    <div class="timeline">
+                        @foreach (var item in scheduleItems)
+                        {
+                            var statusClass = item.Status switch
+                            {
+                                "completed" => "bg-success",
+                                "ongoing" => "bg-primary",
+                                "upcoming" => "bg-warning",
+                                _ => "bg-secondary"
+                            };
+                            var statusText = item.Status switch
+                            {
+                                "completed" => "Đã xong",
+                                "ongoing" => "Đang diễn ra",
+                                "upcoming" => "Sắp tới",
+                                _ => "Đã lên lịch"
+                            };
+                            var statusBadgeClass = item.Status switch
+                            {
+                                "completed" => "success",
+                                "ongoing" => "primary",
+                                "upcoming" => "warning",
+                                _ => "secondary"
+                            };
+                            
+                            <div class="timeline-item">
+                                <div class="timeline-time">@item.Time.ToString("HH:mm")</div>
+                                <div class="timeline-badge @statusClass"></div>
+                                <div class="timeline-content">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>@item.Description</strong><br>
+                                            <small class="text-muted">
+                                                @if (item.User != null)
+                                                {
+                                                    <text>@item.User.FullName</text>
+                                                }
+                                                @if (item.Type == "checkout")
+                                                {
+                                                    <text>→ @item.BookingSchedule?.Purpose</text>
+                                                }
+                                                else if (item.Type == "checkin")
+                                                {
+                                                    <text>→ Kết thúc sử dụng</text>
+                                                }
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-@statusBadgeClass">@statusText</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                        <p>Không có lịch trình nào hôm nay</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="col-lg-4">
+        <!-- Vehicles Status -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-car-front me-2"></i>Trạng thái xe
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Đang hoạt động</span>
+                        <strong class="text-success">@Model.VehicleStats.ActiveVehicles/@Model.VehicleStats.TotalVehicles</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: @(Model.VehicleStats.TotalVehicles > 0 ? (Model.VehicleStats.ActiveVehicles * 100.0 / Model.VehicleStats.TotalVehicles) : 0)%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Đang sử dụng</span>
+                        <strong class="text-primary">@Model.VehicleStats.InUseVehicles/@Model.VehicleStats.TotalVehicles</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" style="width: @(Model.VehicleStats.TotalVehicles > 0 ? (Model.VehicleStats.InUseVehicles * 100.0 / Model.VehicleStats.TotalVehicles) : 0)%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Bảo trì</span>
+                        <strong class="text-warning">@Model.VehicleStats.MaintenanceVehicles/@Model.VehicleStats.TotalVehicles</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: @(Model.VehicleStats.TotalVehicles > 0 ? (Model.VehicleStats.MaintenanceVehicles * 100.0 / Model.VehicleStats.TotalVehicles) : 0)%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Ngừng hoạt động</span>
+                        <strong class="text-danger">@Model.VehicleStats.InactiveVehicles/@Model.VehicleStats.TotalVehicles</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-danger" style="width: @(Model.VehicleStats.TotalVehicles > 0 ? (Model.VehicleStats.InactiveVehicles * 100.0 / Model.VehicleStats.TotalVehicles) : 0)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Check-in/out -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-qr-code me-2"></i>Check-in/Check-out nhanh
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label small">Quét QR hoặc nhập biển số</label>
+                    <input type="text" class="form-control" placeholder="VD: 30A-12345">
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">
+                        <i class="bi bi-box-arrow-right me-2"></i>Check-out
+                    </button>
+                    <button class="btn btn-outline-success">
+                        <i class="bi bi-box-arrow-in-left me-2"></i>Check-in
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Alerts -->
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-exclamation-triangle me-2"></i>Cảnh báo bảo trì
+            </div>
+            <div class="card-body">
+                @if (Model.MaintenanceAlerts.Any())
+                {
+                    @foreach (var alert in Model.MaintenanceAlerts)
+                    {
+                        var alertClass = alert.AlertLevel switch
+                        {
+                            "danger" => "alert-danger",
+                            "warning" => "alert-warning",
+                            _ => "alert-info"
+                        };
+                        
+                        <div class="alert @alertClass mb-3">
+                            <strong>@alert.Vehicle.Brand @alert.Vehicle.Model</strong><br>
+                            <small>@alert.Message</small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-success mb-0">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <strong>Tất cả xe đều trong tình trạng tốt</strong>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0.5rem;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: var(--gray-200);
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-time {
+        position: absolute;
+        left: -6rem;
+        top: 0;
+        font-weight: 600;
+        color: var(--gray-600);
+        width: 4rem;
+        text-align: right;
+    }
+    
+    .timeline-badge {
+        position: absolute;
+        left: -1.625rem;
+        top: 0.25rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .timeline-content {
+        padding: 0.75rem 1rem;
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+        border-left: 3px solid var(--primary);
+    }
+</style>
+

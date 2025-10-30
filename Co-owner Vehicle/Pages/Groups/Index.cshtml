@@ -1,0 +1,216 @@
+@page
+@model Co_owner_Vehicle.Pages.Groups.IndexModel
+@{
+    ViewData["Title"] = "Nhóm đồng sở hữu";
+}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-people text-primary me-2"></i>Nhóm đồng sở hữu
+        </h2>
+        <p class="text-muted mb-0">Quản lý nhóm và thành viên đồng sở hữu xe</p>
+    </div>
+    <div>
+        <a asp-page="/Groups/Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Tạo nhóm mới
+        </a>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <select class="form-select" name="statusFilter" asp-for="StatusFilter">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Active">Hoạt động</option>
+                        <option value="Suspended">Tạm dừng</option>
+                        <option value="Dissolved">Giải thể</option>
+                        <option value="Pending">Chờ duyệt</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <a asp-page="/Groups/Index" class="btn btn-outline-danger w-100">
+                        <i class="bi bi-x-lg me-2"></i>Xóa bộ lọc
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Groups List -->
+@if (Model.Groups.Any())
+{
+    <div class="row g-4">
+        @foreach (var groupItem in Model.Groups)
+        {
+            var group = groupItem.Group;
+            var vehicle = groupItem.Vehicle;
+            
+            var statusBadge = group.Status switch
+            {
+                GroupStatus.Active => ("bg-success", "Hoạt động"),
+                GroupStatus.Suspended => ("bg-warning", "Tạm dừng"),
+                GroupStatus.Dissolved => ("bg-danger", "Giải thể"),
+                GroupStatus.Pending => ("bg-info", "Chờ duyệt"),
+                _ => ("bg-secondary", group.Status.ToString())
+            };
+            
+            var headerColor = (group.CoOwnerGroupId % 4) switch
+            {
+                0 => "bg-primary",
+                1 => "bg-success", 
+                2 => "bg-secondary",
+                _ => "bg-info"
+            };
+            
+            var vehicleTypeBadge = vehicle.VehicleType switch
+            {
+                VehicleType.ElectricCar => ("bg-info", "Xe điện"),
+                VehicleType.HybridCar => ("bg-warning", "Hybrid"),
+                VehicleType.GasolineCar => ("bg-danger", "Xăng"),
+                VehicleType.Motorcycle => ("bg-secondary", "Xe máy"),
+                VehicleType.Bicycle => ("bg-secondary", "Xe đạp"),
+                _ => ("bg-secondary", vehicle.VehicleType.ToString())
+            };
+            
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header @headerColor text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-car-front me-2"></i>@group.GroupName
+                            </h5>
+                            <span class="badge bg-light text-dark">@groupItem.Members.Count thành viên</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Vehicle Info -->
+                        <div class="d-flex gap-3 mb-4 pb-3 border-bottom">
+                            <div class="@headerColor bg-opacity-10 p-3 rounded">
+                                <i class="bi bi-car-front-fill fs-1 @headerColor.Replace("bg-", "text-")"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">@vehicle.Brand @vehicle.Model</h6>
+                                <p class="text-muted mb-1 small">Biển số: <strong>@vehicle.LicensePlate</strong></p>
+                                <div class="d-flex gap-2">
+                                    <span class="badge @statusBadge.Item1">@statusBadge.Item2</span>
+                                    <span class="badge @vehicleTypeBadge.Item1">@vehicleTypeBadge.Item2</span>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-page="/Groups/Details" asp-route-id="@group.CoOwnerGroupId">
+                                        <i class="bi bi-eye me-2"></i>Chi tiết nhóm
+                                    </a></li>
+                                    @if (Model.IsAdmin() || Model.IsStaff() || groupItem.Members.Any(m => m.User.UserId == Model.GetCurrentUserId() && m.Role == MemberRole.Admin))
+                                    {
+                                        <li><a class="dropdown-item" asp-page="/Groups/Edit" asp-route-id="@group.CoOwnerGroupId">
+                                            <i class="bi bi-pencil me-2"></i>Chỉnh sửa
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                            <i class="bi bi-person-plus me-2"></i>Thêm thành viên
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#">
+                                            <i class="bi bi-trash me-2"></i>Giải tán nhóm
+                                        </a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Members List -->
+                        <h6 class="mb-3">Thành viên</h6>
+                        <div class="members-list">
+                            @foreach (var member in groupItem.Members.Take(3))
+                            {
+                                var userInitials = string.Join("", member.User.FullName.Split(' ').Select(n => n.Length > 0 ? n[0].ToString() : "").Take(2));
+                                var roleBadge = member.Role switch
+                                {
+                                    MemberRole.Admin => ("bg-warning", "Admin"),
+                                    MemberRole.Member => ("bg-secondary", "Owner"),
+                                    _ => ("bg-secondary", member.Role.ToString())
+                                };
+                                
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <img src="https://ui-avatars.com/api/?name=@userInitials&background=4F46E5&color=fff" 
+                                         class="rounded-circle" width="48" height="48">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-0 fw-semibold">@member.User.FullName</p>
+                                        <small class="text-muted">@member.User.Email</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge @roleBadge.Item1 mb-1">@roleBadge.Item2</span><br>
+                                        <strong class="text-primary">@($"{member.OwnershipPercentage:N0}%")</strong>
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (groupItem.Members.Count > 3)
+                            {
+                                <div class="text-center">
+                                    <small class="text-muted">+@(groupItem.Members.Count - 3) thành viên khác</small>
+                                </div>
+                            }
+                        </div>
+                        
+                        @if (groupItem.HasActiveVoting && groupItem.ActiveVoting != null)
+                        {
+                            <div class="alert alert-warning mt-3">
+                                <i class="bi bi-megaphone me-2"></i>
+                                <strong>Bỏ phiếu đang diễn ra!</strong><br>
+                                <small>@groupItem.ActiveVoting.Title - @groupItem.ActiveVoting.Votes.Count phiếu / @groupItem.Members.Count thành viên</small>
+                                <div class="mt-2">
+                                    <a asp-page="/Groups/Voting" asp-route-id="@groupItem.ActiveVoting.VotingSessionId" class="btn btn-sm btn-success me-2">
+                                        <i class="bi bi-hand-thumbs-up me-1"></i>Tham gia bỏ phiếu
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Quỹ chung</small>
+                                    <strong class="text-success">@groupItem.CommonFundBalance.ToString("N0")₫</strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Chi phí tháng này</small>
+                                    <strong class="text-danger">@groupItem.MonthlyExpenses.ToString("N0")₫</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-people display-1 text-muted d-block mb-3"></i>
+            <h5 class="text-muted">Không có nhóm nào</h5>
+            <p class="text-muted">@(string.IsNullOrEmpty(Model.StatusFilter?.ToString()) 
+                ? "Bạn chưa tham gia nhóm đồng sở hữu nào." 
+                : "Không có nhóm nào phù hợp với bộ lọc của bạn.")</p>
+            <a asp-page="/Groups/Create" class="btn btn-primary mt-2">
+                <i class="bi bi-plus-lg me-2"></i>Tạo nhóm mới
+            </a>
+        </div>
+    </div>
+}
+
