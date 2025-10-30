@@ -1,0 +1,15 @@
+{
+  "name": "co-owner-vehicle",
+  "version": "1.0.0",
+  "description": "Hệ thống quản lý đồng sở hữu xe cho phép nhiều người cùng sở hữu và sử dụng một chiếc xe, với các tính năng quản lý lịch đặt xe, chi phí, thanh toán và báo cáo tài chính.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "qrcode-generator": "^2.0.4"
+  }
+}
