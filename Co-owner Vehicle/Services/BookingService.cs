@@ -117,25 +117,61 @@ namespace Co_owner_Vehicle.Services
 
         public async Task<bool> ConfirmBookingAsync(int bookingId, int confirmedByUserId)
         {
-            var booking = await _context.BookingSchedules.FindAsync(bookingId);
+            var booking = await _context.BookingSchedules
+                .Include(bs => bs.Vehicle)
+                .Include(bs => bs.User)
+                .FirstOrDefaultAsync(bs => bs.BookingScheduleId == bookingId);
             if (booking == null) return false;
 
             booking.Status = BookingStatus.Confirmed;
             booking.ConfirmedAt = DateTime.UtcNow;
             booking.ConfirmedBy = confirmedByUserId;
             await _context.SaveChangesAsync();
+
+            // Create notification for the user
+            var notification = new Notification
+            {
+                UserId = booking.UserId,
+                Type = NotificationType.BookingApproved,
+                Title = "Lịch đặt được duyệt",
+                Message = $"{booking.Vehicle?.Brand} {booking.Vehicle?.Model} - {booking.StartTime:dd/MM/yyyy}",
+                RelatedEntityId = booking.BookingScheduleId,
+                RelatedEntityType = "Booking",
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
             return true;
         }
 
         public async Task<bool> CancelBookingAsync(int bookingId, string reason)
         {
-            var booking = await _context.BookingSchedules.FindAsync(bookingId);
+            var booking = await _context.BookingSchedules
+                .Include(bs => bs.Vehicle)
+                .Include(bs => bs.User)
+                .FirstOrDefaultAsync(bs => bs.BookingScheduleId == bookingId);
             if (booking == null) return false;
 
             booking.Status = BookingStatus.Cancelled;
             booking.CancelledAt = DateTime.UtcNow;
             booking.CancellationReason = reason;
             await _context.SaveChangesAsync();
+
+            // Create notification for the user
+            var notification = new Notification
+            {
+                UserId = booking.UserId,
+                Type = NotificationType.BookingRejected,
+                Title = "Lịch đặt bị từ chối",
+                Message = $"{booking.Vehicle?.Brand} {booking.Vehicle?.Model} - {booking.StartTime:dd/MM/yyyy}",
+                RelatedEntityId = booking.BookingScheduleId,
+                RelatedEntityType = "Booking",
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
             return true;
         }
 

@@ -31,98 +31,107 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Hãng xe <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" value="Tesla" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Model <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" value="Model 3" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Biển số xe <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" value="30A-12345" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Loại xe <span class="text-danger">*</span></label>
-                            <select class="form-select" required>
-                                <option value="1" selected>Xe điện</option>
-                                <option value="2">Hybrid</option>
-                                <option value="3">Xăng</option>
-                                <option value="4">Xe máy</option>
-                                <option value="5">Xe đạp điện</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Năm sản xuất</label>
-                            <input type="number" class="form-control" value="2023" min="1900" max="@DateTime.Now.Year">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Màu sắc</label>
-                            <input type="text" class="form-control" value="Đen">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số VIN</label>
-                            <input type="text" class="form-control" value="5YJ3E1EA1KF123456" maxlength="17">
-                            <small class="text-muted">Vehicle Identification Number</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số máy</label>
-                            <input type="text" class="form-control" value="ENG123456">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Giá mua</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" value="1200000000">
-                                <span class="input-group-text">đ</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ngày mua</label>
-                            <input type="date" class="form-control" value="2023-01-15">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số km hiện tại</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" value="15000">
-                                <span class="input-group-text">km</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
-                            <select class="form-select" required>
-                                <option value="1" selected>Hoạt động</option>
-                                <option value="2">Bảo dưỡng</option>
-                                <option value="3">Sửa chữa</option>
-                                <option value="4">Không hoạt động</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Hình ảnh xe</label>
-                            <input type="file" class="form-control" accept="image/*" multiple>
-                            <small class="text-muted">Có thể upload nhiều ảnh (Max 5MB mỗi ảnh)</small>
-                            <div class="mt-2">
-                                <img src="https://via.placeholder.com/200x150" class="img-thumbnail me-2" style="width: 150px;">
-                                <img src="https://via.placeholder.com/200x150" class="img-thumbnail" style="width: 150px;">
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Mô tả</label>
-                            <textarea class="form-control" rows="4">Xe điện Tesla Model 3, màu đen, đã sử dụng 15,000 km. Tình trạng tốt.</textarea>
-                        </div>
+                @if (Model.Vehicle == null)
+                {
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Không tìm thấy xe
                     </div>
-                    <hr class="my-4">
-                    <div class="d-flex justify-content-between">
-                        <a asp-page="/Vehicles/Details" class="btn btn-outline-secondary">
-                            <i class="bi bi-x-lg me-2"></i>Hủy
-                        </a>
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-lg me-2"></i>Lưu thay đổi
-                        </button>
-                    </div>
-                </form>
+                }
+                else
+                {
+                    <form method="post">
+                        <input type="hidden" asp-for="Vehicle.VehicleId" />
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Hãng xe <span class="text-danger">*</span></label>
+                                <input asp-for="Vehicle.Brand" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Model <span class="text-danger">*</span></label>
+                                <input asp-for="Vehicle.Model" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Biển số xe <span class="text-danger">*</span></label>
+                                <input asp-for="Vehicle.LicensePlate" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Loại xe <span class="text-danger">*</span></label>
+                                <select asp-for="Vehicle.VehicleType" class="form-select" asp-items="Html.GetEnumSelectList<Co_owner_Vehicle.Models.VehicleType>()" required>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Năm sản xuất</label>
+                                <input asp-for="Vehicle.Year" type="number" class="form-control" min="1900" max="@DateTime.Now.Year">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Màu sắc</label>
+                                <input asp-for="Vehicle.Color" type="text" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Số VIN</label>
+                                <input asp-for="Vehicle.VIN" type="text" class="form-control" maxlength="17">
+                                <small class="text-muted">Vehicle Identification Number</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Số máy</label>
+                                <input asp-for="Vehicle.EngineNumber" type="text" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Giá mua</label>
+                                <div class="input-group">
+                                    <input asp-for="Vehicle.PurchasePrice" type="number" class="form-control">
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ngày mua</label>
+                                <input asp-for="Vehicle.PurchaseDate" type="date" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Số km hiện tại</label>
+                                <div class="input-group">
+                                    <input asp-for="Vehicle.CurrentMileage" type="number" class="form-control">
+                                    <span class="input-group-text">km</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+                                <select asp-for="Vehicle.Status" class="form-select" asp-items="Html.GetEnumSelectList<Co_owner_Vehicle.Models.VehicleStatus>()" required>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Hình ảnh xe</label>
+                                <input type="file" class="form-control" accept="image/*" multiple>
+                                <small class="text-muted">Có thể upload nhiều ảnh (Max 5MB mỗi ảnh)</small>
+                                @if (!string.IsNullOrEmpty(Model.Vehicle.ImagePath))
+                                {
+                                    <div class="mt-2">
+                                        <img src="@Model.Vehicle.ImagePath" class="img-thumbnail me-2" style="width: 150px;">
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Mô tả</label>
+                                <textarea asp-for="Vehicle.Description" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="d-flex justify-content-between">
+                            <a asp-page="/Vehicles/Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Hủy
+                            </a>
+                            <div>
+                                <button type="submit" class="btn btn-primary btn-lg me-2">
+                                    <i class="bi bi-check-lg me-2"></i>Lưu thay đổi
+                                </button>
+                                <button type="submit" asp-page-handler="Delete" asp-route-id="@Model.Vehicle.VehicleId" 
+                                        class="btn btn-danger btn-lg" onclick="return confirm('Bạn có chắc muốn xóa xe này? Hành động này không thể hoàn tác.');">
+                                    <i class="bi bi-trash me-2"></i>Xóa xe
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                }
             </div>
         </div>
     </div>

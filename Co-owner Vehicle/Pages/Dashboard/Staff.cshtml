@@ -4,6 +4,22 @@
     ViewData["Title"] = "Staff Dashboard";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -125,9 +141,11 @@
                                                         <i class="bi bi-check-lg"></i> Duyệt
                                                     </button>
                                                 </form>
-                                                <button class="btn btn-danger" onclick="rejectBooking(@booking.BookingScheduleId)">
-                                                    <i class="bi bi-x-lg"></i> Từ chối
-                                                </button>
+                                                <form method="post" asp-page="/Bookings/Details" asp-page-handler="Reject" asp-route-id="@booking.BookingScheduleId" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn từ chối lịch đặt này?');">
+                                                        <i class="bi bi-x-lg"></i> Từ chối
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>

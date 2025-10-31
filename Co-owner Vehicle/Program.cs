@@ -4,11 +4,16 @@ using Microsoft.AspNetCore.Authorization;
 using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Services;
 using Co_owner_Vehicle.Services.Interfaces;
+using Co_owner_Vehicle.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    // Configure global page filter
+    options.Conventions.ConfigureFilter(new NotificationPageFilterFactory());
+});
 
 // Add Entity Framework
 builder.Services.AddDbContext<CoOwnerVehicleDbContext>(options =>

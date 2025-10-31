@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Co_owner_Vehicle.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddNotifications : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -116,6 +116,33 @@ namespace Co_owner_Vehicle.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VehicleServices", x => x.VehicleServiceId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    RelatedEntityId = table.Column<int>(type: "int", nullable: true),
+                    RelatedEntityType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -422,6 +449,7 @@ namespace Co_owner_Vehicle.Migrations
                     ContractContent = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SignedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ContractFilePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
@@ -844,15 +872,6 @@ namespace Co_owner_Vehicle.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "BookingSchedules",
-                columns: new[] { "BookingScheduleId", "CancellationReason", "CancelledAt", "CompletedAt", "ConfirmedAt", "ConfirmedBy", "CreatedAt", "EndTime", "EstimatedMileage", "Notes", "PickupLocation", "Priority", "Purpose", "ReturnLocation", "StartTime", "Status", "UserId", "VehicleId" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, new DateTime(2024, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc), 4, new DateTime(2024, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 10, 29, 4, 0, 0, 0, DateTimeKind.Utc), null, null, null, 2, "Đi công tác", null, new DateTime(2024, 10, 29, 0, 0, 0, 0, DateTimeKind.Utc), 2, 3, 1 },
-                    { 2, null, null, null, null, null, new DateTime(2024, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2024, 10, 31, 6, 0, 0, 0, DateTimeKind.Utc), null, null, null, 2, "Đi du lịch cuối tuần", null, new DateTime(2024, 10, 31, 0, 0, 0, 0, DateTimeKind.Utc), 1, 4, 1 }
-                });
-
-            migrationBuilder.InsertData(
                 table: "CoOwnerGroups",
                 columns: new[] { "CoOwnerGroupId", "ActivatedAt", "CreatedAt", "CreatedBy", "Description", "DissolutionReason", "DissolvedAt", "GroupName", "Status", "UpdatedAt", "VehicleId" },
                 values: new object[,]
@@ -1063,6 +1082,11 @@ namespace Co_owner_Vehicle.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OwnershipShares_CoOwnerGroupId",
                 table: "OwnershipShares",
                 column: "CoOwnerGroupId");
@@ -1213,6 +1237,9 @@ namespace Co_owner_Vehicle.Migrations
 
             migrationBuilder.DropTable(
                 name: "GroupMembers");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "OwnershipShares");

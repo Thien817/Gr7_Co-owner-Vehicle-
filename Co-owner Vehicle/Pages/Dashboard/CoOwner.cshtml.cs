@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Co_owner_Vehicle.Helpers;
 using Co_owner_Vehicle.Services.Interfaces;
 using Co_owner_Vehicle.Models;
+using Co_owner_Vehicle.Data;
 
 namespace Co_owner_Vehicle.Pages.Dashboard
 {
@@ -13,17 +15,20 @@ namespace Co_owner_Vehicle.Pages.Dashboard
         private readonly IBookingService _bookingService;
         private readonly IExpenseService _expenseService;
         private readonly IPaymentService _paymentService;
+        private readonly CoOwnerVehicleDbContext _context;
 
         public CoOwnerModel(
             IGroupService groupService,
             IBookingService bookingService,
             IExpenseService expenseService,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            CoOwnerVehicleDbContext context)
         {
             _groupService = groupService;
             _bookingService = bookingService;
             _expenseService = expenseService;
             _paymentService = paymentService;
+            _context = context;
         }
 
         // User Groups và Vehicles
@@ -39,6 +44,9 @@ namespace Co_owner_Vehicle.Pages.Dashboard
         public List<Expense> RecentExpenses { get; set; } = new();
         public List<Expense> PendingExpenses { get; set; } = new();
         public List<Payment> OutstandingPayments { get; set; } = new();
+
+        // Notifications
+        public List<Notification> Notifications { get; set; } = new();
 
         // Statistics
         public DashboardStats Stats { get; set; } = new();
@@ -120,6 +128,13 @@ namespace Co_owner_Vehicle.Pages.Dashboard
 
             // Load outstanding payments
             OutstandingPayments = await _paymentService.GetOutstandingPaymentsAsync(userId);
+
+            // Load recent notifications
+            Notifications = await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.CreatedAt)
+                .Take(5)
+                .ToListAsync();
 
             // Calculate statistics
             Stats = new DashboardStats

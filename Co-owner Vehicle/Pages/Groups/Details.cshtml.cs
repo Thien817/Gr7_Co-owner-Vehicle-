@@ -158,20 +158,38 @@ namespace Co_owner_Vehicle.Pages.Groups
                 ? Math.Min(100m, NewMemberShare.Value)
                 : 50m;
 
+            // Validate: phần trăm phải <= 100
+            if (newMemberPercentage > 100m)
+            {
+                ModelState.AddModelError(nameof(NewMemberShare), "Tỷ lệ sở hữu không được vượt quá 100%");
+                return await OnGetAsync(id);
+            }
+
             // Lấy danh sách thành viên và shares hiện tại
             var groupMembers = await _groupService.GetGroupMembersAsync(id);
             var shares = await _groupService.GetOwnershipSharesAsync(id);
-            var owner = groupMembers.FirstOrDefault(m => m.Role == MemberRole.Owner);
 
-            // Xác định người bị trừ phần trăm: ưu tiên owner, nếu không có thì người có % cao nhất
-            var donorUserId = owner?.UserId
-                ?? shares.OrderByDescending(s => s.Percentage).FirstOrDefault()?.UserId;
+            // Xác định người bị trừ phần trăm: ưu tiên người có % cao nhất (KHÔNG phải Owner)
+            var ownerUserId = groupMembers.FirstOrDefault(m => m.Role == MemberRole.Owner)?.UserId;
+            var nonOwnerShares = shares.Where(s => s.UserId != ownerUserId).ToList();
+            
+            var donorUserId = nonOwnerShares.Count > 0
+                ? nonOwnerShares.OrderByDescending(s => s.Percentage).FirstOrDefault()?.UserId
+                : ownerUserId; // Nếu chỉ có Owner, thì Owner sẽ bị trừ
 
             if (donorUserId.HasValue)
             {
                 var donorShare = shares.FirstOrDefault(s => s.UserId == donorUserId.Value)
                                 ?? await _groupService.GetUserOwnershipShareAsync(id, donorUserId.Value);
                 var donorCurrent = donorShare?.Percentage ?? 100m;
+                
+                // Validate: người cho không được có % thấp hơn % cần lấy
+                if (donorCurrent < newMemberPercentage)
+                {
+                    ModelState.AddModelError(nameof(NewMemberShare), $"Thành viên hiện tại chỉ có {donorCurrent}% sở hữu, không đủ để chia {newMemberPercentage}%");
+                    return await OnGetAsync(id);
+                }
+
                 var donorUpdated = Math.Max(0m, donorCurrent - newMemberPercentage);
                 await _groupService.UpdateOwnershipShareAsync(id, donorUserId.Value, donorUpdated, donorShare?.InvestmentAmount);
             }
@@ -180,7 +198,7 @@ namespace Co_owner_Vehicle.Pages.Groups
             await _groupService.AddMemberToGroupAsync(id, user.UserId, NewMemberRole);
             await _groupService.UpdateOwnershipShareAsync(id, user.UserId, newMemberPercentage, null);
 
-            // Chuẩn hóa tổng sở hữu về đúng 100% (nếu sai lệch do dữ liệu cũ)
+            // Chuẩn hóa tổng sở hữu về đúng 100% (nếu sai lệch do rounding)
             var updatedShares = await _groupService.GetOwnershipSharesAsync(id);
             var total = updatedShares.Sum(s => s.Percentage);
             if (Math.Abs(total - 100m) > 0.01m)
@@ -195,7 +213,15 @@ namespace Co_owner_Vehicle.Pages.Groups
                 }
             }
 
-            TempData["SuccessMessage"] = "Đã thêm thành viên vào nhóm";
+            // Validate tổng shares cuối cùng = 100%
+            var finalTotal = await _groupService.GetTotalOwnershipPercentageAsync(id);
+            if (Math.Abs(finalTotal - 100m) > 0.01m)
+            {
+                ModelState.AddModelError(string.Empty, $"Lỗi: Tổng tỷ lệ sở hữu hiện tại là {finalTotal}%, không đúng 100%");
+                return await OnGetAsync(id);
+            }
+
+            TempData["SuccessMessage"] = $"Đã thêm thành viên vào nhóm và phân bổ {newMemberPercentage}% sở hữu";
             return RedirectToPage(new { id });
         }
 
