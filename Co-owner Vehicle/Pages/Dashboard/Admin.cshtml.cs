@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Co_owner_Vehicle.Helpers;
 using Co_owner_Vehicle.Services.Interfaces;
 using Co_owner_Vehicle.Models;
-using Co_owner_Vehicle.Data;
 
 namespace Co_owner_Vehicle.Pages.Dashboard
 {
@@ -16,7 +14,7 @@ namespace Co_owner_Vehicle.Pages.Dashboard
         private readonly IGroupService _groupService;
         private readonly IBookingService _bookingService;
         private readonly IExpenseService _expenseService;
-        private readonly CoOwnerVehicleDbContext _context;
+        private readonly IPaymentService _paymentService;
 
         public AdminModel(
             IUserService userService,
@@ -24,14 +22,14 @@ namespace Co_owner_Vehicle.Pages.Dashboard
             IGroupService groupService,
             IBookingService bookingService,
             IExpenseService expenseService,
-            CoOwnerVehicleDbContext context)
+            IPaymentService paymentService)
         {
             _userService = userService;
             _vehicleService = vehicleService;
             _groupService = groupService;
             _bookingService = bookingService;
             _expenseService = expenseService;
-            _context = context;
+            _paymentService = paymentService;
         }
 
         // System Statistics
@@ -114,9 +112,7 @@ namespace Co_owner_Vehicle.Pages.Dashboard
             Stats.BookingsThisMonth = allBookings.Count(b => b.CreatedAt >= startOfMonth);
 
             // Revenue (total payments)
-            Stats.TotalRevenue = await _context.Payments
-                .Where(p => p.Status == PaymentStatus.Completed && p.PaymentDate >= startOfMonth)
-                .SumAsync(p => (decimal?)p.Amount) ?? 0;
+            Stats.TotalRevenue = await _paymentService.GetTotalRevenueAsync(startOfMonth, null);
         }
 
         private async Task LoadRecentActivitiesAsync()
@@ -125,10 +121,7 @@ namespace Co_owner_Vehicle.Pages.Dashboard
             var now = DateTime.UtcNow;
 
             // Recent users (last 10)
-            var recentUsers = await _context.Users
-                .OrderByDescending(u => u.CreatedAt)
-                .Take(5)
-                .ToListAsync();
+            var recentUsers = await _userService.GetRecentUsersAsync(5);
 
             foreach (var user in recentUsers)
             {
@@ -146,10 +139,7 @@ namespace Co_owner_Vehicle.Pages.Dashboard
             }
 
             // Recent vehicles (last 5)
-            var recentVehicles = await _context.Vehicles
-                .OrderByDescending(v => v.CreatedAt)
-                .Take(5)
-                .ToListAsync();
+            var recentVehicles = await _vehicleService.GetRecentVehiclesAsync(5);
 
             foreach (var vehicle in recentVehicles)
             {
@@ -167,13 +157,11 @@ namespace Co_owner_Vehicle.Pages.Dashboard
             }
 
             // Recent pending bookings (last 5)
-            var pendingBookings = await _context.BookingSchedules
-                .Include(b => b.Vehicle)
-                .Include(b => b.User)
-                .Where(b => b.Status == BookingStatus.Pending)
+            var allPendingBookings = await _bookingService.GetPendingBookingsAsync();
+            var pendingBookings = allPendingBookings
                 .OrderByDescending(b => b.CreatedAt)
                 .Take(5)
-                .ToListAsync();
+                .ToList();
 
             foreach (var booking in pendingBookings)
             {
@@ -191,13 +179,10 @@ namespace Co_owner_Vehicle.Pages.Dashboard
             }
 
             // Recent pending expenses (last 5)
-            var pendingExpenses = await _context.Expenses
-                .Include(e => e.Vehicle)
-                .Include(e => e.ExpenseCategory)
-                .Where(e => e.Status == ExpenseStatus.Pending)
-                .OrderByDescending(e => e.CreatedAt)
+            var allPendingExpenses = await _expenseService.GetPendingApprovalExpensesAsync();
+            var pendingExpenses = allPendingExpenses
                 .Take(5)
-                .ToListAsync();
+                .ToList();
 
             foreach (var expense in pendingExpenses)
             {
@@ -224,28 +209,18 @@ namespace Co_owner_Vehicle.Pages.Dashboard
         private async Task LoadPendingActionsAsync()
         {
             // Pending bookings
-            var pendingBookings = await _context.BookingSchedules
-                .Where(b => b.Status == BookingStatus.Pending)
-                .CountAsync();
-            Pending.PendingBookings = pendingBookings;
+            var allPendingBookings = await _bookingService.GetPendingBookingsAsync();
+            Pending.PendingBookings = allPendingBookings.Count;
 
             // Pending expenses
-            var pendingExpenses = await _context.Expenses
-                .Where(e => e.Status == ExpenseStatus.Pending)
-                .CountAsync();
-            Pending.PendingExpenses = pendingExpenses;
+            var allPendingExpenses = await _expenseService.GetPendingApprovalExpensesAsync();
+            Pending.PendingExpenses = allPendingExpenses.Count;
 
             // Unverified users
-            var unverifiedUsers = await _context.Users
-                .Where(u => !u.IsVerified && u.IsActive)
-                .CountAsync();
-            Pending.UnverifiedUsers = unverifiedUsers;
+            Pending.UnverifiedUsers = await _userService.GetUnverifiedUsersCountAsync();
 
             // Pending verifications
-            var pendingVerifications = await _context.UserVerifications
-                .Where(uv => uv.Status == VerificationStatus.Pending)
-                .CountAsync();
-            Pending.PendingVerifications = pendingVerifications;
+            Pending.PendingVerifications = await _userService.GetPendingVerificationsCountAsync();
         }
 
         private string GetTimeAgo(DateTime dateTime, DateTime now)

@@ -1,21 +1,24 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Models;
 using Co_owner_Vehicle.Helpers;
-using Microsoft.EntityFrameworkCore;
+using Co_owner_Vehicle.Services.Interfaces;
 
 namespace Co_owner_Vehicle.Pages.Expenses
 {
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly CoOwnerVehicleDbContext _context;
+        private readonly IExpenseService _expenseService;
+        private readonly IVehicleService _vehicleService;
+        private readonly IGroupService _groupService;
 
-        public IndexModel(CoOwnerVehicleDbContext context)
+        public IndexModel(IExpenseService expenseService, IVehicleService vehicleService, IGroupService groupService)
         {
-            _context = context;
+            _expenseService = expenseService;
+            _vehicleService = vehicleService;
+            _groupService = groupService;
         }
 
         public ExpenseStats Stats { get; set; } = new();
@@ -54,39 +57,31 @@ namespace Co_owner_Vehicle.Pages.Expenses
 
             if (isAdmin || isStaff)
             {
-                Vehicles = await _context.Vehicles
+                Vehicles = (await _vehicleService.GetAllVehiclesAsync())
                     .Where(v => v.Status == VehicleStatus.Active)
                     .OrderBy(v => v.Brand)
                     .ThenBy(v => v.Model)
-                    .ToListAsync();
+                    .ToList();
             }
             else
             {
                 // Co-owner chỉ xem xe của mình
-                var userGroups = await _context.GroupMembers
-                    .Where(gm => gm.UserId == currentUserId && gm.Status == MemberStatus.Active)
-                    .Select(gm => gm.CoOwnerGroupId)
-                    .ToListAsync();
-
-                var vehicleIds = await _context.CoOwnerGroups
-                    .Where(g => userGroups.Contains(g.CoOwnerGroupId))
-                    .Select(g => g.VehicleId)
-                    .Distinct()
-                    .ToListAsync();
-
-                Vehicles = await _context.Vehicles
+                var userGroups = await _groupService.GetGroupsByUserIdAsync(currentUserId);
+                var vehicleIds = userGroups.Select(g => g.VehicleId).Distinct().ToList();
+                var allVehicles = await _vehicleService.GetAllVehiclesAsync();
+                Vehicles = allVehicles
                     .Where(v => vehicleIds.Contains(v.VehicleId) && v.Status == VehicleStatus.Active)
                     .OrderBy(v => v.Brand)
                     .ThenBy(v => v.Model)
-                    .ToListAsync();
+                    .ToList();
             }
         }
 
         private async Task LoadCategoriesAsync()
         {
-            Categories = await _context.ExpenseCategories
+            Categories = (await _expenseService.GetAllExpenseCategoriesAsync())
                 .OrderBy(c => c.CategoryName)
-                .ToListAsync();
+                .ToList();
         }
 
         private async Task LoadStatisticsAsync()
@@ -99,35 +94,37 @@ namespace Co_owner_Vehicle.Pages.Expenses
             var thisMonth = new DateTime(today.Year, today.Month, 1);
             var lastMonth = thisMonth.AddMonths(-1);
 
-            var query = _context.Expenses
-                .Include(e => e.Vehicle)
-                .Include(e => e.CoOwnerGroup)
-                .AsQueryable();
-
-            // Apply role-based filtering
-            if (!isAdmin && !isStaff)
+            List<Expense> allExpenses;
+            if (isAdmin || isStaff)
             {
-                var userGroups = await _context.GroupMembers
-                    .Where(gm => gm.UserId == currentUserId && gm.Status == MemberStatus.Active)
-                    .Select(gm => gm.CoOwnerGroupId)
-                    .ToListAsync();
-
-                query = query.Where(e => userGroups.Contains(e.CoOwnerGroupId));
+                allExpenses = await _expenseService.GetAllExpensesAsync();
             }
+            else
+            {
+                var userGroups = await _groupService.GetGroupsByUserIdAsync(currentUserId);
+                var groupIds = userGroups.Select(g => g.CoOwnerGroupId).ToList();
+                allExpenses = new List<Expense>();
+                foreach (var groupId in groupIds)
+                {
+                    var groupExpenses = await _expenseService.GetExpensesByGroupIdAsync(groupId);
+                    allExpenses.AddRange(groupExpenses);
+                }
+            }
+            var query = allExpenses.AsQueryable();
 
             // This month expenses
-            var thisMonthExpenses = await query
+            var thisMonthExpenses = query
                 .Where(e => e.ExpenseDate >= thisMonth)
-                .ToListAsync();
+                .ToList();
 
             var totalThisMonth = thisMonthExpenses.Sum(e => e.Amount);
             var approvedThisMonth = thisMonthExpenses.Count(e => e.Status == ExpenseStatus.Approved);
             var pendingThisMonth = thisMonthExpenses.Count(e => e.Status == ExpenseStatus.Pending);
 
             // Last month for comparison
-            var lastMonthExpenses = await query
+            var lastMonthExpenses = query
                 .Where(e => e.ExpenseDate >= lastMonth && e.ExpenseDate < thisMonth)
-                .ToListAsync();
+                .ToList();
 
             var totalLastMonth = lastMonthExpenses.Sum(e => e.Amount);
             var percentageChange = totalLastMonth > 0 
@@ -161,23 +158,23 @@ namespace Co_owner_Vehicle.Pages.Expenses
             var isAdmin = this.IsAdmin();
             var isStaff = this.IsStaff();
 
-            var query = _context.Expenses
-                .Include(e => e.Vehicle)
-                .Include(e => e.ExpenseCategory)
-                .Include(e => e.CoOwnerGroup)
-                .Include(e => e.ApprovedByUser)
-                .AsQueryable();
-
-            // Apply role-based filtering
-            if (!isAdmin && !isStaff)
+            List<Expense> allExpenses;
+            if (isAdmin || isStaff)
             {
-                var userGroups = await _context.GroupMembers
-                    .Where(gm => gm.UserId == currentUserId && gm.Status == MemberStatus.Active)
-                    .Select(gm => gm.CoOwnerGroupId)
-                    .ToListAsync();
-
-                query = query.Where(e => userGroups.Contains(e.CoOwnerGroupId));
+                allExpenses = await _expenseService.GetAllExpensesAsync();
             }
+            else
+            {
+                var userGroups = await _groupService.GetGroupsByUserIdAsync(currentUserId);
+                var groupIds = userGroups.Select(g => g.CoOwnerGroupId).ToList();
+                allExpenses = new List<Expense>();
+                foreach (var groupId in groupIds)
+                {
+                    var groupExpenses = await _expenseService.GetExpensesByGroupIdAsync(groupId);
+                    allExpenses.AddRange(groupExpenses);
+                }
+            }
+            var query = allExpenses.AsQueryable();
 
             // Apply filters
             if (!string.IsNullOrEmpty(SearchTerm))
@@ -221,10 +218,10 @@ namespace Co_owner_Vehicle.Pages.Expenses
                 // "Tất cả" - no additional filter
             }
 
-            var expenses = await query
+            var expenses = query
                 .OrderByDescending(e => e.ExpenseDate)
                 .Take(50) // Limit for performance
-                .ToListAsync();
+                .ToList();
 
             Expenses = new List<ExpenseViewModel>();
             foreach (var expense in expenses)
@@ -256,22 +253,28 @@ namespace Co_owner_Vehicle.Pages.Expenses
 
         private async Task<decimal> CalculateUserShareAsync(Expense expense, int userId)
         {
-            var ownershipShare = await _context.OwnershipShares
-                .FirstOrDefaultAsync(os => os.UserId == userId && 
-                                         os.CoOwnerGroupId == expense.CoOwnerGroupId && 
-                                         os.IsActive);
+            var ownershipShare = await _groupService.GetUserOwnershipShareAsync(expense.CoOwnerGroupId, userId);
 
             if (ownershipShare == null) return 0;
 
             decimal ownershipPercentage = ownershipShare.Percentage;
 
-            return expense.SplitMethod switch
+            if (expense.SplitMethod == SplitMethod.Equal)
             {
-                SplitMethod.ByOwnership => expense.Amount * (ownershipPercentage / 100),
-                SplitMethod.Equal => expense.Amount / (await _context.GroupMembers
-                    .CountAsync(gm => gm.CoOwnerGroupId == expense.CoOwnerGroupId && gm.Status == MemberStatus.Active)),
-                _ => expense.Amount * (ownershipPercentage / 100) // Default to ownership
-            };
+                var members = await _groupService.GetGroupMembersAsync(expense.CoOwnerGroupId);
+                var activeCount = members.Count(gm => gm.Status == MemberStatus.Active);
+                return activeCount > 0 ? expense.Amount / activeCount : 0;
+            }
+
+            // Use service method for ownership split
+            if (expense.SplitMethod == SplitMethod.ByOwnership)
+            {
+                var split = await _expenseService.CalculateExpenseSplitByOwnershipAsync(expense.ExpenseId);
+                return split.ContainsKey(userId) ? split[userId] : 0;
+            }
+
+            // Default or other methods
+            return expense.Amount * (ownershipPercentage / 100);
         }
     }
 

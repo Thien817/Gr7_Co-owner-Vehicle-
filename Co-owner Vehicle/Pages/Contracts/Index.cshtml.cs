@@ -1,21 +1,22 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Models;
 using Co_owner_Vehicle.Helpers;
-using Microsoft.EntityFrameworkCore;
+using Co_owner_Vehicle.Services.Interfaces;
 
 namespace Co_owner_Vehicle.Pages.Contracts
 {
     [Authorize(Roles = "Admin,Staff,Co-owner")]
     public class IndexModel : PageModel
     {
-        private readonly CoOwnerVehicleDbContext _context;
+        private readonly IContractService _contractService;
+        private readonly IGroupService _groupService;
 
-        public IndexModel(CoOwnerVehicleDbContext context)
+        public IndexModel(IContractService contractService, IGroupService groupService)
         {
-            _context = context;
+            _contractService = contractService;
+            _groupService = groupService;
         }
 
         public List<ContractViewModel> Contracts { get; set; } = new();
@@ -33,47 +34,34 @@ namespace Co_owner_Vehicle.Pages.Contracts
             var isAdmin = this.IsAdmin();
             var isStaff = this.IsStaff();
 
-            IQueryable<EContract> contractsQuery;
+            List<EContract> contracts;
 
             if (isAdmin || isStaff)
             {
                 // Admin and Staff can see all contracts
-                contractsQuery = _context.EContracts
-                    .Include(c => c.CoOwnerGroup)
-                        .ThenInclude(g => g.Vehicle)
-                    .Include(c => c.CreatedByUser)
-                    .Include(c => c.SignedByUser);
+                contracts = await _contractService.GetAllAsync(groupId: GroupFilter, status: StatusFilter);
             }
             else
             {
                 // Co-owners can only see contracts of their groups
-                var userGroups = await _context.GroupMembers
-                    .Where(gm => gm.UserId == currentUserId && gm.Status == MemberStatus.Active)
-                    .Select(gm => gm.CoOwnerGroupId)
-                    .ToListAsync();
+                var userGroups = await _groupService.GetGroupsByUserIdAsync(currentUserId);
+                var userGroupIds = userGroups.Select(g => g.CoOwnerGroupId).ToList();
 
-                contractsQuery = _context.EContracts
-                    .Include(c => c.CoOwnerGroup)
-                        .ThenInclude(g => g.Vehicle)
-                    .Include(c => c.CreatedByUser)
-                    .Include(c => c.SignedByUser)
-                    .Where(c => userGroups.Contains(c.CoOwnerGroupId));
+                if (GroupFilter.HasValue && !userGroupIds.Contains(GroupFilter.Value))
+                {
+                    // User doesn't have access to this group
+                    Contracts = new List<ContractViewModel>();
+                    var contractStats = await _contractService.GetStatisticsAsync();
+                    Statistics.TotalContracts = contractStats.total;
+                    Statistics.ActiveContracts = contractStats.active;
+                    Statistics.PendingContracts = contractStats.pending;
+                    Statistics.ExpiringSoon = contractStats.expiringSoon;
+                    return;
+                }
+
+                var allContracts = await _contractService.GetAllAsync(groupId: GroupFilter, status: StatusFilter);
+                contracts = allContracts.Where(c => userGroupIds.Contains(c.CoOwnerGroupId)).ToList();
             }
-
-            // Apply filters
-            if (StatusFilter.HasValue)
-            {
-                contractsQuery = contractsQuery.Where(c => c.Status == StatusFilter.Value);
-            }
-
-            if (GroupFilter.HasValue)
-            {
-                contractsQuery = contractsQuery.Where(c => c.CoOwnerGroupId == GroupFilter.Value);
-            }
-
-            var contracts = await contractsQuery
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
 
             Contracts = contracts.Select(c => new ContractViewModel
             {
@@ -98,13 +86,11 @@ namespace Co_owner_Vehicle.Pages.Contracts
             }).ToList();
 
             // Calculate statistics
-            Statistics.TotalContracts = await _context.EContracts.CountAsync();
-            Statistics.ActiveContracts = await _context.EContracts.CountAsync(c => c.Status == ContractStatus.Active);
-            Statistics.PendingContracts = await _context.EContracts.CountAsync(c => c.Status == ContractStatus.Pending);
-            Statistics.ExpiringSoon = await _context.EContracts.CountAsync(c => 
-                c.Status == ContractStatus.Active && 
-                c.ExpiresAt.HasValue && 
-                c.ExpiresAt.Value <= DateTime.UtcNow.AddDays(30));
+            var stats = await _contractService.GetStatisticsAsync();
+            Statistics.TotalContracts = stats.total;
+            Statistics.ActiveContracts = stats.active;
+            Statistics.PendingContracts = stats.pending;
+            Statistics.ExpiringSoon = stats.expiringSoon;
         }
     }
 
