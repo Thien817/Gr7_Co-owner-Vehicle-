@@ -296,35 +296,50 @@
                 <i class="bi bi-bell me-2"></i>Thông báo
             </div>
             <div class="card-body">
-                <div class="d-flex gap-2 mb-3">
-                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                        <i class="bi bi-check-lg text-white"></i>
+                @if (Model.Notifications.Any())
+                {
+                    @foreach (var notification in Model.Notifications)
+                    {
+                        var iconClass = notification.Type switch
+                        {
+                            NotificationType.BookingApproved => "bi-check-lg",
+                            NotificationType.BookingRejected => "bi-x-lg",
+                            NotificationType.NewExpense => "bi-receipt",
+                            NotificationType.PaymentReminder => "bi-exclamation-lg",
+                            NotificationType.PaymentReceived => "bi-credit-card",
+                            _ => "bi-bell"
+                        };
+                        var bgClass = notification.Type switch
+                        {
+                            NotificationType.BookingApproved => "bg-success",
+                            NotificationType.BookingRejected => "bg-danger",
+                            NotificationType.NewExpense => "bg-primary",
+                            NotificationType.ExpenseApproved => "bg-success",
+                            NotificationType.ExpenseRejected => "bg-danger",
+                            NotificationType.PaymentReminder => "bg-warning",
+                            NotificationType.PaymentReceived => "bg-success",
+                            NotificationType.VehicleMaintenance => "bg-info",
+                            _ => "bg-secondary"
+                        };
+                        
+                        <div class="d-flex gap-2 mb-3">
+                            <div class="@bgClass rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                                <i class="bi @iconClass text-white"></i>
+                            </div>
+                            <div>
+                                <p class="mb-1 fs-7"><strong>@notification.Title</strong></p>
+                                <small class="text-muted">@notification.Message</small>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-3 text-muted">
+                        <i class="bi bi-bell-slash fs-4 d-block mb-2"></i>
+                        <p class="mb-0 fs-7">Không có thông báo</p>
                     </div>
-                    <div>
-                        <p class="mb-1 fs-7"><strong>Lịch đặt được duyệt</strong></p>
-                        <small class="text-muted">Tesla Model 3 - 29/10/2024</small>
-                    </div>
-                </div>
-                
-                <div class="d-flex gap-2 mb-3">
-                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                        <i class="bi bi-receipt text-white"></i>
-                    </div>
-                    <div>
-                        <p class="mb-1 fs-7"><strong>Chi phí mới</strong></p>
-                        <small class="text-muted">Phí sạc điện - 500.000đ</small>
-                    </div>
-                </div>
-                
-                <div class="d-flex gap-2">
-                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                        <i class="bi bi-exclamation-lg text-white"></i>
-                    </div>
-                    <div>
-                        <p class="mb-1 fs-7"><strong>Nhắc nhở thanh toán</strong></p>
-                        <small class="text-muted">Công nợ: 1.200.000đ</small>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>

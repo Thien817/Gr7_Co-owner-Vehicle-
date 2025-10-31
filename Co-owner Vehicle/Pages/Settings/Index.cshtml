@@ -4,6 +4,23 @@
     ViewData["Title"] = "Cài đặt";
 }
 
+<!-- TempData Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -19,10 +36,7 @@
     <div class="col-lg-3">
         <div class="card">
             <div class="list-group list-group-flush">
-                <a href="#account" class="list-group-item list-group-item-action active" data-bs-toggle="pill" data-bs-target="#accountTab">
-                    <i class="bi bi-person me-2"></i>Tài khoản
-                </a>
-                <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="pill" data-bs-target="#notificationsTab">
+                <a href="#notifications" class="list-group-item list-group-item-action active" data-bs-toggle="pill" data-bs-target="#notificationsTab">
                     <i class="bi bi-bell me-2"></i>Thông báo
                 </a>
                 <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="pill" data-bs-target="#securityTab">
@@ -41,60 +55,8 @@
     <!-- Right Content - Settings Panels -->
     <div class="col-lg-9">
         <div class="tab-content">
-            <!-- Account Settings -->
-            <div class="tab-pane fade show active" id="accountTab">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="bi bi-person me-2"></i>Cài đặt tài khoản
-                    </div>
-                    <div class="card-body">
-                        <form>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" value="nguyenvana@email.com">
-                                    <small class="text-muted">Email này được dùng để đăng nhập</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="tel" class="form-control" value="0901111111">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Ngôn ngữ</label>
-                                    <select class="form-select">
-                                        <option selected>Tiếng Việt</option>
-                                        <option>English</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Múi giờ</label>
-                                    <select class="form-select">
-                                        <option selected>UTC+7 (Vietnam)</option>
-                                        <option>UTC+0 (GMT)</option>
-                                    </select>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Định dạng ngày tháng</label>
-                                    <select class="form-select">
-                                        <option selected>DD/MM/YYYY</option>
-                                        <option>MM/DD/YYYY</option>
-                                        <option>YYYY-MM-DD</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-lg me-2"></i>Lưu thay đổi
-                                </button>
-                                <button type="button" class="btn btn-secondary">Hủy</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
             <!-- Notifications Settings -->
-            <div class="tab-pane fade" id="notificationsTab">
+            <div class="tab-pane fade show active" id="notificationsTab">
                 <div class="card">
                     <div class="card-header">
                         <i class="bi bi-bell me-2"></i>Cài đặt thông báo

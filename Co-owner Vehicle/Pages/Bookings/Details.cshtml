@@ -4,6 +4,30 @@
     ViewData["Title"] = "Chi tiết đặt lịch";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (Model.Booking == null)
+{
+    <div class="alert alert-danger">
+        Không tìm thấy lịch đặt này
+    </div>
+}
+else
+{
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -43,13 +67,40 @@
                     <div class="flex-grow-1">
                         <h4 class="fw-bold mb-2">Đặt lịch sử dụng xe</h4>
                         <div class="d-flex gap-2 flex-wrap mb-2">
-                            <span class="badge bg-success fs-6">Đã xác nhận</span>
-                            <span class="badge bg-primary">Ưu tiên cao</span>
-                            <span class="badge bg-info">Công tác</span>
+                            @{
+                                var statusBadgeClass = Model.Booking.Status switch
+                                {
+                                    BookingStatus.Confirmed => "success",
+                                    BookingStatus.Pending => "warning",
+                                    BookingStatus.Cancelled => "danger",
+                                    BookingStatus.Completed => "info",
+                                    _ => "secondary"
+                                };
+                                var priorityBadgeClass = Model.Booking.Priority switch
+                                {
+                                    PriorityLevel.High => "danger",
+                                    PriorityLevel.Normal => "primary",
+                                    PriorityLevel.Low => "secondary",
+                                    _ => "primary"
+                                };
+                            }
+                            <span class="badge bg-@statusBadgeClass fs-6">@Model.Booking.Status switch
+                            {
+                                BookingStatus.Confirmed => "Đã xác nhận",
+                                BookingStatus.Pending => "Chờ duyệt",
+                                BookingStatus.Cancelled => "Đã hủy",
+                                BookingStatus.Completed => "Hoàn thành",
+                                _ => Model.Booking.Status.ToString()
+                            }</span>
+                            @if (Model.Booking.Priority == PriorityLevel.High)
+                            {
+                                <span class="badge bg-@priorityBadgeClass">Ưu tiên cao</span>
+                            }
                         </div>
-                        <p class="text-muted mb-0">
-                            Đi công tác tại TP.HCM
-                        </p>
+                        @if (!string.IsNullOrEmpty(Model.Booking.Purpose))
+                        {
+                            <p class="text-muted mb-0">@Model.Booking.Purpose</p>
+                        }
                     </div>
                 </div>
 
@@ -57,39 +108,48 @@
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Xe</label>
                         <p class="mb-0">
-                            <i class="bi bi-car-front me-1"></i>Tesla Model 3 - 30A-12345
+                            <i class="bi bi-car-front me-1"></i>@Model.Booking.Vehicle?.Brand @Model.Booking.Vehicle?.Model - @Model.Booking.Vehicle?.LicensePlate
                         </p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Người đặt</label>
                         <div class="d-flex align-items-center">
-                            <div class="avatar-xs bg-primary text-white me-2">NV</div>
-                            <span>Nguyễn Văn A</span>
+                            @{
+                                var userInitials = string.Join("", (Model.Booking.User?.FullName ?? "").Split(' ').Select(n => n.Length > 0 ? n[0].ToString() : "").Take(2));
+                            }
+                            <div class="avatar-xs bg-primary text-white me-2">@userInitials</div>
+                            <span>@Model.Booking.User?.FullName</span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Thời gian bắt đầu</label>
                         <p class="mb-0">
-                            <i class="bi bi-calendar3 me-1"></i>29/10/2024 08:00
+                            <i class="bi bi-calendar3 me-1"></i>@Model.Booking.StartTime.ToString("dd/MM/yyyy HH:mm")
                         </p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Thời gian kết thúc</label>
                         <p class="mb-0">
-                            <i class="bi bi-calendar3 me-1"></i>29/10/2024 12:00
+                            <i class="bi bi-calendar3 me-1"></i>@Model.Booking.EndTime.ToString("dd/MM/yyyy HH:mm")
                         </p>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small text-muted">Thời lượng</label>
-                        <p class="mb-0"><strong>4 giờ</strong></p>
+                        <p class="mb-0"><strong>@Math.Round((Model.Booking.EndTime - Model.Booking.StartTime).TotalHours, 1) giờ</strong></p>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label small text-muted">Người duyệt</label>
-                        <div class="d-flex align-items-center">
-                            <div class="avatar-xs bg-success text-white me-2">LT</div>
-                            <span>Lê Thị B</span>
+                    @if (Model.Booking.ConfirmedByUser != null)
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Người duyệt</label>
+                            <div class="d-flex align-items-center">
+                                @{
+                                    var confirmedByInitials = string.Join("", (Model.Booking.ConfirmedByUser.FullName ?? "").Split(' ').Select(n => n.Length > 0 ? n[0].ToString() : "").Take(2));
+                                }
+                                <div class="avatar-xs bg-success text-white me-2">@confirmedByInitials</div>
+                                <span>@Model.Booking.ConfirmedByUser.FullName</span>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
             <div class="col-md-4">
@@ -97,20 +157,36 @@
                     <div class="card-body">
                         <h6 class="mb-3">Trạng thái</h6>
                         <div class="mb-3 pb-3 border-bottom">
-                            <span class="badge bg-success fs-6">Đã xác nhận</span>
-                            <p class="text-muted small mb-0 mt-2">Duyệt bởi: Lê Thị B</p>
-                            <p class="text-muted small mb-0">Ngày: 28/10/2024 14:30</p>
+                            <span class="badge bg-@statusBadgeClass fs-6">@Model.Booking.Status switch
+                            {
+                                BookingStatus.Confirmed => "Đã xác nhận",
+                                BookingStatus.Pending => "Chờ duyệt",
+                                BookingStatus.Cancelled => "Đã hủy",
+                                BookingStatus.Completed => "Hoàn thành",
+                                _ => Model.Booking.Status.ToString()
+                            }</span>
+                            @if (Model.Booking.ConfirmedByUser != null && Model.Booking.ConfirmedAt.HasValue)
+                            {
+                                <p class="text-muted small mb-0 mt-2">Duyệt bởi: @Model.Booking.ConfirmedByUser.FullName</p>
+                                <p class="text-muted small mb-0">Ngày: @Model.Booking.ConfirmedAt.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                            }
                         </div>
                         <div class="mb-3 pb-3 border-bottom">
                             <small class="text-muted">Check-in</small>
                             <p class="mb-0">
-                                <span class="badge bg-secondary">Chưa check-in</span>
+                                @{
+                                    var hasCheckIn = Model.CheckInOutRecords.Any(r => r.Type == CheckInOutType.CheckIn && r.BookingScheduleId == Model.Booking.BookingScheduleId);
+                                }
+                                <span class="badge bg-@(hasCheckIn ? "success" : "secondary")">@(hasCheckIn ? "Đã check-in" : "Chưa check-in")</span>
                             </p>
                         </div>
                         <div>
                             <small class="text-muted">Check-out</small>
                             <p class="mb-0">
-                                <span class="badge bg-secondary">Chưa check-out</span>
+                                @{
+                                    var hasCheckOut = Model.CheckInOutRecords.Any(r => r.Type == CheckInOutType.CheckOut && r.BookingScheduleId == Model.Booking.BookingScheduleId);
+                                }
+                                <span class="badge bg-@(hasCheckOut ? "success" : "secondary")">@(hasCheckOut ? "Đã check-out" : "Chưa check-out")</span>
                             </p>
                         </div>
                     </div>
@@ -198,32 +274,69 @@
             </div>
             <div class="card-body">
                 <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-marker bg-success"></div>
-                        <div class="timeline-content">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">Đặt lịch được tạo</h6>
-                                    <p class="text-muted mb-1 small">Bởi: Nguyễn Văn A</p>
-                                    <small class="text-muted">27/10/2024 10:30</small>
+                    @if (Model.Booking.CreatedAt != null)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info"></div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Đặt lịch được tạo</h6>
+                                        <p class="text-muted mb-1 small">Bởi: @Model.Booking.User?.FullName</p>
+                                        <small class="text-muted">@Model.Booking.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <span class="badge bg-info">Mới tạo</span>
                                 </div>
-                                <span class="badge bg-info">Mới tạo</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-marker bg-success"></div>
-                        <div class="timeline-content">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">Đặt lịch được duyệt</h6>
-                                    <p class="text-muted mb-1 small">Bởi: Lê Thị B</p>
-                                    <small class="text-muted">28/10/2024 14:30</small>
+                    }
+                    @if (Model.Booking.ConfirmedAt != null)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Đặt lịch được duyệt</h6>
+                                        <p class="text-muted mb-1 small">Bởi: @Model.Booking.ConfirmedByUser?.FullName</p>
+                                        <small class="text-muted">@Model.Booking.ConfirmedAt.Value.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <span class="badge bg-success">Đã duyệt</span>
                                 </div>
-                                <span class="badge bg-success">Đã duyệt</span>
                             </div>
                         </div>
-                    </div>
+                    }
+                    @if (Model.Booking.CancelledAt != null)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-danger"></div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Đặt lịch đã bị hủy</h6>
+                                        <p class="text-muted mb-1 small">@Model.Booking.CancellationReason</p>
+                                        <small class="text-muted">@Model.Booking.CancelledAt.Value.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <span class="badge bg-danger">Đã hủy</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.Booking.CompletedAt != null)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Đặt lịch hoàn thành</h6>
+                                        <small class="text-muted">@Model.Booking.CompletedAt.Value.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <span class="badge bg-primary">Hoàn thành</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -241,36 +354,39 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Ghi chú chi tiết</label>
-                    <textarea class="form-control" rows="4" placeholder="Ghi chú về đặt lịch này..."></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">File đính kèm</label>
-                    <input type="file" class="form-control" multiple accept="image/*,.pdf">
-                    <small class="text-muted">Hỗ trợ: JPG, PNG, PDF (Max 5MB mỗi file)</small>
-                </div>
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item px-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
-                                    <i class="bi bi-file-earmark-pdf text-primary"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-1">Giấy phép lái xe.pdf</h6>
-                                    <small class="text-muted">2.3 MB</small>
-                                </div>
-                            </div>
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary" title="Xem">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-outline-danger" title="Xóa">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="p-3 bg-light rounded">
+                        @if (!string.IsNullOrEmpty(Model.Booking.Notes))
+                        {
+                            <p class="mb-0">@Model.Booking.Notes</p>
+                        }
+                        else
+                        {
+                            <p class="mb-0 text-muted">Không có ghi chú</p>
+                        }
                     </div>
                 </div>
+                @if (!string.IsNullOrEmpty(Model.Booking.PickupLocation) || !string.IsNullOrEmpty(Model.Booking.ReturnLocation))
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Địa điểm</label>
+                        <div class="row g-2">
+                            @if (!string.IsNullOrEmpty(Model.Booking.PickupLocation))
+                            {
+                                <div class="col-12">
+                                    <small class="text-muted d-block">Điểm đón:</small>
+                                    <p class="mb-0">@Model.Booking.PickupLocation</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Booking.ReturnLocation))
+                            {
+                                <div class="col-12">
+                                    <small class="text-muted d-block">Điểm trả:</small>
+                                    <p class="mb-0">@Model.Booking.ReturnLocation</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -305,37 +421,6 @@
             </div>
         </div>
 
-        <!-- Related Bookings -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="bi bi-calendar3 me-2"></i>Đặt lịch liên quan
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item list-group-item-action px-0">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="mb-1">30/10/2024</h6>
-                                <small class="text-muted">08:00 - 12:00</small>
-                            </div>
-                            <span class="badge bg-warning">Chờ duyệt</span>
-                        </div>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action px-0">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h6 class="mb-1">01/11/2024</h6>
-                                <small class="text-muted">14:00 - 18:00</small>
-                            </div>
-                            <span class="badge bg-success">Đã xác nhận</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-
         <!-- Vehicle Info -->
         <div class="card">
             <div class="card-header">
@@ -346,21 +431,41 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label small text-muted">Xe</label>
-                    <p class="mb-0">Tesla Model 3</p>
+                    <p class="mb-0">@Model.Booking.Vehicle?.Brand @Model.Booking.Vehicle?.Model</p>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small text-muted">Biển số</label>
-                    <p class="mb-0">30A-12345</p>
+                    <p class="mb-0">@Model.Booking.Vehicle?.LicensePlate</p>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small text-muted">Số km hiện tại</label>
-                    <p class="mb-0"><strong>15,000 km</strong></p>
+                    <p class="mb-0"><strong>@(Model.Booking.Vehicle?.CurrentMileage?.ToString("N0") ?? "N/A") km</strong></p>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small text-muted">Trạng thái</label>
-                    <p class="mb-0"><span class="badge bg-success">Hoạt động</span></p>
+                    <p class="mb-0">
+                        @{
+                            var vehicleStatusClass = Model.Booking.Vehicle?.Status switch
+                            {
+                                VehicleStatus.Active => "success",
+                                VehicleStatus.Maintenance => "warning",
+                                VehicleStatus.Repair => "danger",
+                                VehicleStatus.Inactive => "secondary",
+                                _ => "secondary"
+                            };
+                            var vehicleStatusText = Model.Booking.Vehicle?.Status switch
+                            {
+                                VehicleStatus.Active => "Hoạt động",
+                                VehicleStatus.Maintenance => "Bảo trì",
+                                VehicleStatus.Repair => "Sửa chữa",
+                                VehicleStatus.Inactive => "Ngừng hoạt động",
+                                _ => "N/A"
+                            };
+                        }
+                        <span class="badge bg-@vehicleStatusClass">@vehicleStatusText</span>
+                    </p>
                 </div>
-                <a href="#" class="btn btn-sm btn-outline-primary w-100">
+                <a asp-page="/Vehicles/Details" asp-route-id="@Model.Booking.VehicleId" class="btn btn-sm btn-outline-primary w-100">
                     <i class="bi bi-eye me-1"></i>Xem chi tiết xe
                 </a>
             </div>
@@ -418,5 +523,6 @@
             }
         });
     </script>
+}
 }
 

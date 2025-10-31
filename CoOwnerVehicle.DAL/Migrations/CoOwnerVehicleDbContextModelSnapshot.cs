@@ -95,34 +95,6 @@ namespace Co_owner_Vehicle.Migrations
                     b.HasIndex("VehicleId", "StartTime", "EndTime");
 
                     b.ToTable("BookingSchedules");
-
-                    b.HasData(
-                        new
-                        {
-                            BookingScheduleId = 1,
-                            ConfirmedAt = new DateTime(2024, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ConfirmedBy = 4,
-                            CreatedAt = new DateTime(2024, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndTime = new DateTime(2024, 10, 29, 4, 0, 0, 0, DateTimeKind.Utc),
-                            Priority = 2,
-                            Purpose = "Đi công tác",
-                            StartTime = new DateTime(2024, 10, 29, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Status = 2,
-                            UserId = 3,
-                            VehicleId = 1
-                        },
-                        new
-                        {
-                            BookingScheduleId = 2,
-                            CreatedAt = new DateTime(2024, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            EndTime = new DateTime(2024, 10, 31, 6, 0, 0, 0, DateTimeKind.Utc),
-                            Priority = 2,
-                            Purpose = "Đi du lịch cuối tuần",
-                            StartTime = new DateTime(2024, 10, 31, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Status = 1,
-                            UserId = 4,
-                            VehicleId = 1
-                        });
                 });
 
             modelBuilder.Entity("Co_owner_Vehicle.Models.CheckInOutRecord", b =>
@@ -943,6 +915,53 @@ namespace Co_owner_Vehicle.Migrations
                             Status = 1,
                             UserId = 7
                         });
+                });
+
+            modelBuilder.Entity("Co_owner_Vehicle.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RelatedEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RelatedEntityType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Co_owner_Vehicle.Models.OwnershipShare", b =>
@@ -2331,6 +2350,17 @@ namespace Co_owner_Vehicle.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Co_owner_Vehicle.Models.Notification", b =>
+                {
+                    b.HasOne("Co_owner_Vehicle.Models.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Co_owner_Vehicle.Models.OwnershipShare", b =>
                 {
                     b.HasOne("Co_owner_Vehicle.Models.CoOwnerGroup", "CoOwnerGroup")
@@ -2562,6 +2592,8 @@ namespace Co_owner_Vehicle.Migrations
                     b.Navigation("CheckInOutRecords");
 
                     b.Navigation("GroupMembers");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Payments");
 

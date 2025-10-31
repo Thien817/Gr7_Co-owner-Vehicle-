@@ -14,6 +14,7 @@ namespace Co_owner_Vehicle.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<UserVerification> UserVerifications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         // Vehicle & Group Management
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -78,6 +79,13 @@ namespace Co_owner_Vehicle.Data
                 .WithMany()
                 .HasForeignKey(uv => uv.ReviewedBy)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure Notification relationship
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Configure Vehicle-Group relationship
             modelBuilder.Entity<CoOwnerGroup>()
@@ -429,7 +437,7 @@ namespace Co_owner_Vehicle.Data
             SeedGroupMembers(modelBuilder);
             SeedOwnershipShares(modelBuilder);
             SeedCommonFunds(modelBuilder);
-            SeedBookingSchedules(modelBuilder);
+            // SeedBookingSchedules(modelBuilder); // Commented out to avoid hardcoded bookings
             SeedExpenses(modelBuilder);
             SeedVotingSessions(modelBuilder);
         }

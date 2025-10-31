@@ -56,6 +56,7 @@ namespace Co_owner_Vehicle.Models
         public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public virtual ICollection<Vote> Votes { get; set; } = new List<Vote>();
         public virtual ICollection<CheckInOutRecord> CheckInOutRecords { get; set; } = new List<CheckInOutRecord>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
         // Computed Properties
         [NotMapped]
