@@ -1,72 +1,124 @@
 @page
 @model Co_owner_Vehicle.Pages.Admin.Users.IndexModel
 @{
-    ViewData["Title"] = "Duyệt người dùng";
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<!-- TempData Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold mb-1">
-            <i class="bi bi-people-check text-primary me-2"></i>Duyệt người dùng mới
+            <i class="bi bi-people text-primary me-2"></i>Quản lý người dùng
         </h2>
-        <p class="text-muted mb-0">Danh sách người dùng chưa xác thực</p>
+        <p class="text-muted mb-0">Danh sách người dùng trong hệ thống</p>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        @if (Model.UnverifiedUsers.Any())
-        {
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th>Họ tên</th>
-                            <th>Email</th>
-                            <th>Ngày đăng ký</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model.UnverifiedUsers)
-                        {
-                            <tr>
-                                <td>@user.FullName</td>
-                                <td>@user.Email</td>
-                                <td>@user.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-                                <td class="text-end">
-                                    <form method="post" asp-page-handler="Verify" class="d-inline">
-                                        <input type="hidden" name="userId" value="@user.UserId" />
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="bi bi-check2-circle me-1"></i>Duyệt
-                                        </button>
-                                    </form>
-                                    <form method="post" asp-page-handler="Deactivate" class="d-inline ms-2">
-                                        <input type="hidden" name="userId" value="@user.UserId" />
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            <i class="bi bi-person-x me-1"></i>Vô hiệu hóa
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="row g-4">
+    <!-- All Users -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-people-fill me-2"></i>Tất cả người dùng (@Model.AllUsers.Count)
             </div>
-        }
-        else
-        {
-            <div class="text-center py-4 text-muted">
-                <i class="bi bi-check2-square fs-1 d-block mb-2"></i>
-                <p>Không có người dùng nào cần duyệt</p>
+            <div class="card-body">
+                @if (Model.AllUsers.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Vai trò</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày đăng ký</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.AllUsers)
+                                {
+                                    <tr>
+                                        <td>@user.UserId</td>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (user.UserRoles != null && user.UserRoles.Any())
+                                            {
+                                                foreach (var role in user.UserRoles.Where(ur => ur.IsActive).Select(ur => ur.Role))
+                                                {
+                                                    <span class="badge bg-primary me-1">@role.RoleName</span>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (user.IsVerified)
+                                            {
+                                                <span class="badge bg-success">Đã xác thực</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">Chưa xác thực</span>
+                                            }
+                                        </td>
+                                        <td>@user.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td class="text-end">
+                                            @if (!user.IsVerified)
+                                            {
+                                                <form method="post" asp-page-handler="Verify" class="d-inline">
+                                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        <i class="bi bi-check2-circle me-1"></i>Duyệt
+                                                    </button>
+                                                </form>
+                                            }
+                                            <form method="post" asp-page-handler="Deactivate" class="d-inline ms-2" onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng @user.FullName?')">
+                                                <input type="hidden" name="userId" value="@user.UserId" />
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash me-1"></i>Xóa
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-people fs-1 d-block mb-2"></i>
+                        <p>Không có người dùng nào</p>
+                    </div>
+                }
             </div>
-        }
+        </div>
     </div>
-    <div class="card-footer bg-transparent d-flex justify-content-between">
-        <a asp-page="/Dashboard/Admin" class="btn btn-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Quay lại Dashboard
-        </a>
-    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-page="/Dashboard/Admin" class="btn btn-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại Dashboard
+    </a>
 </div>
 
 
