@@ -1,21 +1,23 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Models;
 using Co_owner_Vehicle.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Co_owner_Vehicle.Services.Interfaces;
 
 namespace Co_owner_Vehicle.Pages.Groups
 {
     [Authorize(Roles = "Co-owner,Admin")]
     public class CreateVotingModel : PageModel
     {
-        private readonly CoOwnerVehicleDbContext _context;
+        private readonly IVotingService _votingService;
+        private readonly IGroupService _groupService;
 
-        public CreateVotingModel(CoOwnerVehicleDbContext context)
+        public CreateVotingModel(IVotingService votingService, IGroupService groupService)
         {
-            _context = context;
+            _votingService = votingService;
+            _groupService = groupService;
         }
 
         [BindProperty]
@@ -28,12 +30,7 @@ namespace Co_owner_Vehicle.Pages.Groups
             var currentUserId = this.GetCurrentUserId();
 
             // Load groups where user is a member
-            var groups = await _context.GroupMembers
-                .Where(gm => gm.UserId == currentUserId && gm.Status == MemberStatus.Active)
-                .Include(gm => gm.CoOwnerGroup)
-                    .ThenInclude(g => g.Vehicle)
-                .Select(gm => gm.CoOwnerGroup)
-                .ToListAsync();
+            var groups = await _groupService.GetGroupsByUserIdAsync(currentUserId);
 
             Groups = groups.Select(g => new CoOwnerGroupViewModel
             {
@@ -56,10 +53,7 @@ namespace Co_owner_Vehicle.Pages.Groups
             var currentUserId = this.GetCurrentUserId();
 
             // Verify user is member of the group
-            var isMember = await _context.GroupMembers
-                .AnyAsync(gm => gm.CoOwnerGroupId == Input.CoOwnerGroupId && 
-                               gm.UserId == currentUserId && 
-                               gm.Status == MemberStatus.Active);
+            var isMember = await _groupService.IsUserInGroupAsync(Input.CoOwnerGroupId, currentUserId);
 
             if (!isMember)
             {
@@ -69,9 +63,8 @@ namespace Co_owner_Vehicle.Pages.Groups
             }
 
             // Get total active members
-            var totalMembers = await _context.GroupMembers
-                .CountAsync(gm => gm.CoOwnerGroupId == Input.CoOwnerGroupId && 
-                                 gm.Status == MemberStatus.Active);
+            var members = await _groupService.GetGroupMembersAsync(Input.CoOwnerGroupId);
+            var totalMembers = members.Count(m => m.Status == MemberStatus.Active);
 
             var votingSession = new VotingSession
             {
@@ -87,12 +80,9 @@ namespace Co_owner_Vehicle.Pages.Groups
                 RequiredVotes = Input.RequiredVotes > 0 ? Input.RequiredVotes : totalMembers
             };
 
-            _context.VotingSessions.Add(votingSession);
-            await _context.SaveChangesAsync();
-
-            // Activate the voting session
+            // Activate on create
             votingSession.Status = VotingStatus.Active;
-            await _context.SaveChangesAsync();
+            await _votingService.CreateSessionAsync(votingSession);
 
             return RedirectToPage("/Groups/Voting", new { id = votingSession.VotingSessionId });
         }

@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Models;
 using Co_owner_Vehicle.Helpers;
-using Microsoft.EntityFrameworkCore;
 using Co_owner_Vehicle.Services.Interfaces;
 
 namespace Co_owner_Vehicle.Pages.Groups
@@ -12,13 +10,13 @@ namespace Co_owner_Vehicle.Pages.Groups
     [Authorize(Roles = "Co-owner,Admin,Staff")]
     public class VotingModel : PageModel
     {
-        private readonly CoOwnerVehicleDbContext _context;
         private readonly IVotingService _votingService;
+        private readonly IGroupService _groupService;
 
-        public VotingModel(CoOwnerVehicleDbContext context, IVotingService votingService)
+        public VotingModel(IVotingService votingService, IGroupService groupService)
         {
-            _context = context;
             _votingService = votingService;
+            _groupService = groupService;
         }
 
         public VotingSessionViewModel? VotingSession { get; set; }
@@ -32,13 +30,7 @@ namespace Co_owner_Vehicle.Pages.Groups
 
             var currentUserId = this.GetCurrentUserId();
 
-            var votingSession = await _context.VotingSessions
-                .Include(v => v.CoOwnerGroup)
-                    .ThenInclude(g => g.Vehicle)
-                .Include(v => v.CreatedByUser)
-                .Include(v => v.Votes)
-                    .ThenInclude(v => v.User)
-                .FirstOrDefaultAsync(v => v.VotingSessionId == id.Value);
+            var votingSession = await _votingService.GetSessionByIdAsync(id.Value);
 
             if (votingSession == null)
                 return NotFound();
@@ -54,9 +46,8 @@ namespace Co_owner_Vehicle.Pages.Groups
             var abstainCount = votingSession.Votes.Count(v => v.Choice == VoteChoice.Abstain);
 
             // Get active members count
-            var totalMembers = await _context.GroupMembers
-                .CountAsync(gm => gm.CoOwnerGroupId == votingSession.CoOwnerGroupId && 
-                                 gm.Status == MemberStatus.Active);
+            var members = await _groupService.GetGroupMembersAsync(votingSession.CoOwnerGroupId);
+            var totalMembers = members.Count(gm => gm.Status == MemberStatus.Active);
 
             VotingSession = new VotingSessionViewModel
             {
@@ -107,8 +98,7 @@ namespace Co_owner_Vehicle.Pages.Groups
             var currentUserId = this.GetCurrentUserId();
 
             // Check if voting session exists and is active
-            var votingSession = await _context.VotingSessions
-                .FirstOrDefaultAsync(v => v.VotingSessionId == id);
+            var votingSession = await _votingService.GetSessionByIdAsync(id);
 
             if (votingSession == null)
                 return NotFound();

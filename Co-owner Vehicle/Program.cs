@@ -4,20 +4,39 @@ using Microsoft.AspNetCore.Authorization;
 using Co_owner_Vehicle.Data;
 using Co_owner_Vehicle.Services;
 using Co_owner_Vehicle.Services.Interfaces;
-using Co_owner_Vehicle.Filters;
+using CoOwnerVehicle.DAL.Repositories.Interfaces;
+using CoOwnerVehicle.DAL.Repositories.Implementations;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorPages(options =>
+// Log connection string for debugging (only in Development)
+if (builder.Environment.IsDevelopment())
 {
-    // Configure global page filter
-    options.Conventions.ConfigureFilter(new NotificationPageFilterFactory());
-});
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"Connection String: {connectionString}");
+}
 
-// Add Entity Framework
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CoOwnerVehicle.BLL.Validators.User.UserCreateDtoValidator>();
+builder.Services.AddAutoMapper(typeof(CoOwnerVehicle.BLL.DTOs.User.UserDto).Assembly);
+
+// Add Entity Framework (MigrationsAssembly = DAL)
 builder.Services.AddDbContext<CoOwnerVehicleDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => 
+        {
+            sql.MigrationsAssembly("CoOwnerVehicle.DAL");
+            sql.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        }));
 
 // Configure Authentication with Cookie Scheme
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -62,7 +81,45 @@ builder.Services.AddScoped<IServiceRecordService, ServiceRecordService>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 builder.Services.AddScoped<ICheckInOutService, CheckInOutService>();
 
+// Register DAL Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<ICoOwnerGroupRepository, CoOwnerGroupRepository>();
+builder.Services.AddScoped<IGroupMemberRepository, GroupMemberRepository>();
+builder.Services.AddScoped<IOwnershipShareRepository, OwnershipShareRepository>();
+builder.Services.AddScoped<IContractRepository, ContractRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+builder.Services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<ICommonFundRepository, CommonFundRepository>();
+builder.Services.AddScoped<IFundTransactionRepository, FundTransactionRepository>();
+builder.Services.AddScoped<IVotingSessionRepository, VotingSessionRepository>();
+builder.Services.AddScoped<IVoteRepository, VoteRepository>();
+builder.Services.AddScoped<ICheckInOutRepository, CheckInOutRecordRepository>();
+builder.Services.AddScoped<IServiceRecordRepository, ServiceRecordRepository>();
+
 var app = builder.Build();
+
+// Ensure database is created and migrations are applied
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<CoOwnerVehicleDbContext>();
+        // Apply migrations automatically
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        // Don't rethrow - let the app continue to start
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
